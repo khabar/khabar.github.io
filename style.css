@@ -66,10 +66,6 @@ li {
     color: #BA68C8;
 }
 
-.point:before {
-    content: "▴ ";
-}
-
 .author-url {
     text-decoration: none;
 }
