@@ -1,4 +1,4 @@
 {
-  "main.css": "style.css?v=1",
-  "main.js": "app.js?v=1"
+  "main.css": "style.css",
+  "main.js": "app.js"
 }
