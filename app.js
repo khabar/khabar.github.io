@@ -1,7 +1,13 @@
 ;(function () {
-    var containerEl = document.querySelector('#container');
-    ['hackerNews', 'github', 'medium', 'quora', 'lobsters', 'productHunt', 'echojs', 'brainpickings', 'smashingMagazine', 'csstricks', 'sidebar']
-    .map(source => {
+    var containerEl = document.querySelector('#container')
+    var toggleThemeEl = document.querySelector('#toggleTheme')
+    var sources = ['hackerNews', 'github', 'medium', 'quora', 'lobsters', 'productHunt', 'echojs', 'brainpickings', 'smashingMagazine', 'csstricks', 'sidebar']
+
+    if (localStorage.getItem('light') === 'true') toggleTheme()
+
+    toggleThemeEl.addEventListener('click', toggleTheme)
+
+    sources.map(source => {
         var list = '<div class="card"><h2 class="title">' + camelCaseToTitleCase(source) + '</h2><ul class="list">'
         fetch('https://cdnapi.pnd.gs/v2/feeds?limit=15&page=1&sort=popular&sources=' + source)
             .then(res => res.json())
@@ -45,6 +51,12 @@
         }
 
         return newText;
+    }
+
+    function toggleTheme(e) {
+        document.body.classList.toggle('light')
+        localStorage.setItem('light', document.body.className.indexOf('light') != -1)
+        e && e.preventDefault()
     }
 
     function timeAgo(datetime) {

@@ -19,8 +19,9 @@ body {
 
 h2 {
     font-size: 2rem;
-    background-color: #212121;
-    padding: 10px
+    background-color: #333333;
+    padding: 10px;
+    color: #FFFFFF;
 }
 
 a {
@@ -116,4 +117,64 @@ li {
     .card {
         width: calc(calc(100vw / 4) - 18.5px);
     }
+}
+
+
+
+.toggle-theme {
+    cursor: pointer;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+    border-bottom-color: white;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+}
+
+.toggle-theme:after {
+    cursor: pointer;
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 10px;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+    border-top-color: black;
+}
+
+/*light theme*/
+
+.light {
+    background-color: #CCCCCC;
+    color: #000000;
+}
+
+.light a {
+    color: #222222;
+}
+
+.light a:hover {
+    color: #000000;
+}
+
+.light a:visited {
+    color: #444444;
+}
+
+.light ul {
+    background-color: #FFFFFF;
+}
+
+.light .description {
+    color: #333333;
+}
+
+.light .footer {
+    color: #555555;
+}
+
+.light .point {
+    color: #BA00C8;
 }
