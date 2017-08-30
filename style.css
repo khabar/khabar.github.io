@@ -89,6 +89,10 @@ li {
     margin-left: 10px;
 }
 
+.card:last-child {
+    padding-right: 10px;
+}
+
 .list {
     overflow-y: scroll;
     overflow-x: hidden;
