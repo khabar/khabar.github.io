@@ -1,38 +1,58 @@
 ;(function () {
-  var containerEl = document.querySelector('#container')
-  var toggleThemeEl = document.querySelector('#toggleTheme')
-  var sources = ['hackerNews', 'github', 'medium', 'quora', 'lobsters', 'productHunt', 'echojs', 'brainpickings', 'smashingMagazine', 'csstricks', 'sidebar']
-  var containerSW = containerEl.scrollWidth - window.innerWidth * 2 + 10
-  var globalScroll = 0
-  var coords = {}
-  var direction
+  const $ = selector => document.querySelector(selector)
+  const $container = $('#container')
+  const $toggleTheme = $('#toggleTheme')
+  const apiURL = 'https://cdnapi.pnd.gs/v2/feeds?limit=20&page=1&sort=popular&sources='
+  const sources = ['hackerNews', 'github', 'medium', 'redditprogramming', 'lobsters', 'productHunt', 'echojs', 'brainpickings', 'smashingMagazine', 'csstricks', 'sidebar']
+  let startCoords = {}
+  let direction = undefined
+  let pageIndex = 0
+  let pageCount = 0
+  let hScrollSize = 0
 
   if (localStorage.getItem('light') === 'true') toggleTheme()
 
-  toggleThemeEl.addEventListener('click', toggleTheme)
+  $toggleTheme.addEventListener('click', toggleTheme)
+  document.addEventListener('touchstart', touchStartHandler)
+  document.addEventListener('touchmove', touchMoveHandler)
+  document.addEventListener('touchend', touchEndHandler)
+  window.addEventListener('resize', winResizeHandler)
 
-  sources.map(source => {
-    var list = '<div class="card"><h2 class="title">' + camelCaseToTitleCase(source) + '</h2><ul class="list">'
-    fetch('https://cdnapi.pnd.gs/v2/feeds?limit=15&page=1&sort=popular&sources=' + source)
+  sources.map(src => {
+    let list = `
+    <div class="card"><h2 class="title">
+    ${camelCaseToTitleCase(src)}
+    </h2><ul class="list">
+    `
+
+    fetch(apiURL + src)
       .then(res => res.json())
       .then(json => {
-        json.map(i => {
-          list += '<li class="item"><a class="url" href="' +
-          i.source.absoluteUrl + '" target="_blank">' +
-          i.title + '</a><span class="description">' +
-          i.description + '</span> <small class="footer">' +
-          (i.source.likesCount ? '<span class="point">' + i.source.likesCount + '</span> points | ' : '') +
-          timeAgo(i.source.createdAt) +
-          (i.source.authorUrl ? (' by <a class="author-url" href="' +
-          i.source.authorUrl + '" target="_blank">' +
-          (i.source.authorName ? i.source.authorName : i.source.authorUrl.split('/').pop()) + '</a></small></li>') : '')
+        json.map(({ source: x, description, title }) => {
+          list += `
+          <li class="item">
+          <a class="url" href="${x.absoluteUrl}" target="_blank">${title}</a>
+          <span class="description">${description}</span>
+          <small class="footer">
+          ${x.likesCount && `<span class="point">${x.likesCount}</span> points | `}
+          ${timeAgo(x.createdAt)}
+          ${
+            x.authorUrl
+            && ` by <a class="author-url" href="${x.authorUrl}" target="_blank">
+            ${(x.authorName ? x.authorName : x.authorUrl.split('/').pop())}
+            </a></small></li>`
+          }
+          `
         })
 
         list += '</ul></div>'
 
-        containerEl.innerHTML += list
+        $container.innerHTML += list
+        pageCount++
       })
   })
+
+  hScrollSize = parseInt(getComputedStyle($container).width) + 10
 
   function camelCaseToTitleCase (camelCase) {
     if (camelCase == null || camelCase == '') {
@@ -40,8 +60,8 @@
     }
 
     camelCase = camelCase.trim()
-    var newText = ''
-    for (var i = 0; i < camelCase.length; i++) {
+    let newText = ''
+    for (let i = 0; i < camelCase.length; i++) {
       if (/[A-Z]/.test(camelCase[i]) &&
         i != 0 &&
         /[a-z]/.test(camelCase[i - 1])) {
@@ -64,7 +84,7 @@
   }
 
   function timeAgo (datetime) {
-    var templates = {
+    const ts = {
       prefix: '',
       suffix: ' ago',
       seconds: 'less than a minute',
@@ -79,11 +99,9 @@
       year: 'about a year',
       years: '%d years'
     }
-    var template = function (t, n) {
-      return templates[t] && templates[t].replace(/%d/i, Math.abs(Math.round(n)))
-    }
+    const t = (x, y) => ts[x] && ts[x].replace(/%d/i, Math.abs(Math.round(y)))
 
-    var timer = function (time) {
+    const timer = time => {
       if (!time) return
       time = time.replace(/\.\d+/, '') // remove milliseconds
       time = time.replace(/-/, '/').replace(/-/, '/')
@@ -91,58 +109,70 @@
       time = time.replace(/([\+\-]\d\d)\:?(\d\d)/, ' $1$2'); // -04:00 -> -0400
       time = new Date(time * 1000 || time)
 
-      var now = new Date()
-      var seconds = ((now.getTime() - time) * .001) >> 0
-      var minutes = seconds / 60
-      var hours = minutes / 60
-      var days = hours / 24
-      var years = days / 365
+      const now = new Date()
+      const seconds = ((now.getTime() - time) * .001) >> 0
+      const minutes = seconds / 60
+      const hours = minutes / 60
+      const days = hours / 24
+      const years = days / 365
 
-      return templates.prefix + (
-        seconds < 45 && template('seconds', seconds) || seconds < 90 && template('minute', 1) || minutes < 45 && template('minutes', minutes) || minutes < 90 && template('hour', 1) || hours < 24 && template('hours', hours) || hours < 42 && template('day', 1) || days < 30 && template('days', days) || days < 45 && template('month', 1) || days < 365 && template('months', days / 30) || years < 1.5 && template('year', 1) || template('years', years)) + templates.suffix
+      return ts.prefix + (
+        seconds < 45 && t('seconds', seconds)
+        || seconds < 90 && t('minute', 1)
+        || minutes < 45 && t('minutes', minutes)
+        || minutes < 90 && t('hour', 1)
+        || hours < 24 && t('hours', hours)
+        || hours < 42 && t('day', 1)
+        || days < 30 && t('days', days)
+        || days < 45 && t('month', 1)
+        || days < 365 && t('months', days / 30)
+        || years < 1.5 && t('year', 1)
+        || t('years', years)
+      ) + ts.suffix
     }
     return timer(datetime)
   }
 
-  document.addEventListener('touchstart', evt => {
-    coords.x = evt.touches[0].clientX
-    coords.y = evt.touches[0].clientY
-  }, false)
+  function touchStartHandler (e) {
+    startCoords.x = e.touches[0].clientX
+    startCoords.y = e.touches[0].clientY
+  }
 
-  document.addEventListener('touchmove', evt => {
-    if (!coords.x || !coords.y) return
+  function touchMoveHandler (e) {
+    if (!startCoords.x || !startCoords.y) return
 
-    var xDiff = coords.x - evt.touches[0].clientX
-    var yDiff = coords.y - evt.touches[0].clientY
+    const xDiff = startCoords.x - e.touches[0].clientX
+    const yDiff = startCoords.y - e.touches[0].clientY
+    
+    direction = Math.abs(xDiff) > Math.abs(yDiff)
+      ? xDiff > 0 ? 'left' : 'right'
+      : yDiff > 0 ? 'up' : 'down'
 
-    direction = Math.abs(xDiff) > Math.abs(yDiff) ? xDiff > 0 ? 'left' : 'right' : yDiff > 0 ? 'up' : 'down'
+    startCoords = {}
+  }
 
-    console.log(direction)
+  function touchEndHandler (e) {
+    switch (direction) {
+      case 'left':
+        if (pageIndex < pageCount) {
+          pageIndex++
+          setTimeout(function () {
+            $container.scrollLeft = hScrollSize * pageIndex
+          }, 500)
+        }
+        break;
+      case 'right':
+        if (pageIndex > 0) {
+          pageIndex--
+          $container.scrollLeft = hScrollSize * pageIndex
+        }
+        break;
+    }
 
-    coords = {}
-  }, false)
+    direction = undefined
+  }
 
-  document.addEventListener('touchend', function handler (params) {
-    scrollStop(() => {
-      if (direction === 'left' && globalScroll < containerSW) {
-        globalScroll += window.innerWidth - 10
-        containerEl.scrollTo(globalScroll, 0)
-        console.log({globalScroll, containerSW})
-      }
-      direction = undefined
-    })
-
-    this.removeEventListener('touchend', handler)
-  })
-
-  function scrollStop (callback) {
-    var isScrolling
-    containerEl.addEventListener('scroll', function handler (event) {
-      window.clearTimeout(isScrolling)
-      isScrolling = setTimeout(() => {
-        callback()
-        this.removeEventListener('scroll', handler)
-      }, 66)
-    }, false)
+  function winResizeHandler(e) {
+    hScrollSize = parseInt(getComputedStyle($container).width) + 10
   }
 })()
