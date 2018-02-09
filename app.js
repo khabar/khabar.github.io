@@ -151,25 +151,17 @@
     startCoords = {}
   }
 
-  function touchEndHandler (e) {
-    switch (direction) {
-      case 'left':
-        if (pageIndex < pageCount) {
-          pageIndex++
-          setTimeout(function () {
-            $container.scrollLeft = hScrollSize * pageIndex
-          }, 500)
-        }
-        break;
-      case 'right':
-        if (pageIndex > 0) {
-          pageIndex--
-          $container.scrollLeft = hScrollSize * pageIndex
-        }
-        break;
-    }
+  function touchEndHandler(e) {
+    if (direction === 'left' && pageIndex < pageCount) scrollLeft(++pageIndex)
+    if (direction === 'right' && pageIndex) scrollLeft(--pageIndex)
 
     direction = undefined
+  }
+
+  function scrollLeft(pageIndex) {
+    setTimeout(() => {
+      $container.scrollLeft = hScrollSize * pageIndex
+    }, 500)
   }
 
   function winResizeHandler(e) {
