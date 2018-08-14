@@ -2,8 +2,9 @@
   const $ = selector => document.querySelector(selector)
   const $container = $('#container')
   const $toggleTheme = $('#toggleTheme')
-  const apiURL = 'https://cdnapi.pnd.gs/v2/feeds?limit=20&page=1&sort=popular&sources='
-  const sources = ['hackerNews', 'github', 'medium', 'redditprogramming', 'lobsters', 'productHunt', 'echojs', 'brainpickings', 'smashingMagazine', 'csstricks', 'sidebar']
+  const apiURL = 'https://cors-anywhere.herokuapp.com/cdnapi.pnd.gs/v2/feeds?limit=20&page=1&sort=popular&sources='
+  const sources = ['hackerNews', 'github', 'medium', 'redditprogramming', 'productHunt', 'echojs', 'csstricks', 'sidebar']
+  // const rss = ['https://api.usepanda.com/v2/feeds/5b72a4e8ca168f2e0027c587/data']
   let startCoords = {}
   let direction = undefined
   let pageIndex = 0
@@ -143,7 +144,7 @@
 
     const xDiff = startCoords.x - e.touches[0].clientX
     const yDiff = startCoords.y - e.touches[0].clientY
-    
+
     direction = Math.abs(xDiff) > Math.abs(yDiff)
       ? xDiff > 0 ? 'left' : 'right'
       : yDiff > 0 ? 'up' : 'down'
