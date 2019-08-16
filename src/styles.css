@@ -1,0 +1,61 @@
+.menu-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hacker-news .sub-link, .hacker-news.tab-selected {
+    color: var(--ion-color-hacker-news) !important;
+}
+
+.github .sub-link, .github.tab-selected {
+    color: var(--ion-color-github) !important;
+}
+
+.dev-community .sub-link, .dev-community.tab-selected {
+    color: var(--ion-color-dev-community) !important;
+}
+
+.reddit .sub-link, .reddit.tab-selected {
+    color: var(--ion-color-reddit) !important;
+}
+
+.medium .sub-link, .medium.tab-selected {
+    color: var(--ion-color-medium) !important;
+}
+
+.product-hunt .sub-link, .product-hunt.tab-selected {
+    color: var(--ion-color-product-hunt) !important;
+}
+
+.p-0 {
+    padding: 0;
+}
+
+.favicon {
+    padding: .5em 1em .5em 0;
+    margin: 0;
+}
+
+.item-text {
+    white-space: normal !important;
+    margin: 0;
+}
+
+.item-text h2 {
+    font-weight: 500;
+}
+
+.item-text p {
+    color: var(--ion-color-step-550) !important;
+}
+
+.item-footer a {
+    text-decoration: none;
+    margin-right: 0.5em;
+    font-weight: 600;
+}
+
+.item-footer ion-icon {
+    vertical-align: middle;
+}

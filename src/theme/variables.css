@@ -74,4 +74,12 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-light-contrast-rgb: 0, 0, 0;
   --ion-color-light-shade: #d7d8da;
   --ion-color-light-tint: #f5f6f9;
+
+  /** sources **/
+  --ion-color-hacker-news: #ff4000;
+  --ion-color-github: #333;
+  --ion-color-dev-community: #4e57ef;
+  --ion-color-reddit: #ff4500;
+  --ion-color-medium: #00ab6c;
+  --ion-color-product-hunt: #da552e;
 }
