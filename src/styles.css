@@ -16,6 +16,10 @@
     color: var(--ion-color-dev-community) !important;
 }
 
+.echo-js .sub-link, .echo-js.tab-selected {
+    color: var(--ion-color-echo-js) !important;
+}
+
 .reddit .sub-link, .reddit.tab-selected {
     color: var(--ion-color-reddit) !important;
 }
