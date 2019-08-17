@@ -1,0 +1,7 @@
+{
+  "appId": "np.com.himalay.khabar",
+  "appName": "Khabar",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "build"
+}
