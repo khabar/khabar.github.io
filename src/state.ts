@@ -3,6 +3,7 @@ import { createGlobalState } from 'react-hooks-global-state'
 const getPersistedState = (key: string) => JSON.parse(window.localStorage[key] || '[]')
 const initialState = {
   loading: false,
+  theme: window.localStorage['theme'] || 'dark',
   hackernews: getPersistedState('hackernews'),
   github: getPersistedState('github'),
   echojs: getPersistedState('echojs'),
@@ -20,6 +21,11 @@ const {
 
 export const setLoading = (isLoading: boolean) => {
   setGlobalState('loading', isLoading)
+}
+
+export const setTheme = (theme: string) => {
+  setGlobalState('theme', theme)
+  window.localStorage['theme'] = theme
 }
 
 export const setState = (key: any, value: Array<object | null>) => {
