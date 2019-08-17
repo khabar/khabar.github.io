@@ -15,11 +15,14 @@ import {
   IonCardContent,
   IonButtons,
   IonMenuButton,
+  IonRefresher,
+  IonRefresherContent,
 } from '@ionic/react'
 import { arrowDropup, chatboxes } from 'ionicons/icons'
 
 import { useGlobalState } from '../state'
 import timeAgo from '../utils/timeAgo'
+import fetchData from '../utils/fetchData'
 
 type Props = RouteComponentProps<{}> & {
   path: any
@@ -30,6 +33,11 @@ const TabContent: React.FunctionComponent<Props> = ({ path, title }) => {
   const [data] = useGlobalState(path)
   const [loading] = useGlobalState('loading')
   type Entry = typeof data[0]
+  const doRefresh = async (e: any) => {
+    await fetchData(path)
+    e.detail.complete()
+  }
+
   return (
     <>
       <IonHeader>
@@ -42,6 +50,9 @@ const TabContent: React.FunctionComponent<Props> = ({ path, title }) => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
+        <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
+          <IonRefresherContent refreshingSpinner="dots" />
+        </IonRefresher>
         {data.map((x: Entry) => (
           <IonCard key={x._id} className={path}>
             <IonCardHeader className="p-0">
