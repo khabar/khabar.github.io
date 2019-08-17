@@ -23,7 +23,11 @@ export const setLoading = (isLoading: boolean) => {
   setGlobalState('loading', isLoading)
 }
 
-export const setTheme = (theme: string) => {
+export const toggleTheme = () => {
+  let theme = window.localStorage['theme']
+  document.body.classList.remove(theme)
+  theme = theme === 'dark' ? 'light' : 'dark'
+  document.body.classList.add(theme)
   setGlobalState('theme', theme)
   window.localStorage['theme'] = theme
 }

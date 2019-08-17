@@ -1,10 +1,10 @@
 import React from 'react'
 import { Switch, Route } from 'react-router-dom'
-import { IonApp, IonPage, IonSplitPane } from '@ionic/react'
+import { IonApp, IonPage } from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
 import { GlobalStateProvider } from './state'
 import fetchData from './utils/fetchData'
-import Menu from './components/Menu'
+// import Menu from './components/Menu'
 import Tabs from './components/Tabs'
 import About from './pages/About'
 
@@ -32,15 +32,13 @@ const App: React.FunctionComponent = () => (
   <GlobalStateProvider>
     <IonApp>
       <IonReactRouter>
-        <IonSplitPane contentId="main">
-          <Menu />
-          <IonPage id="main">
-            <Switch>
-              <Route path="/about" component={About} />
-              <Route path="/" component={Tabs} />
-            </Switch>
-          </IonPage>
-        </IonSplitPane>
+        {/* <Menu /> */}
+        <IonPage id="main">
+          <Switch>
+            <Route path="/about" component={About} />
+            <Route path="/" component={Tabs} />
+          </Switch>
+        </IonPage>
       </IonReactRouter>
     </IonApp>
   </GlobalStateProvider>

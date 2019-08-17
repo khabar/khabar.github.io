@@ -14,22 +14,22 @@ import {
   IonCardHeader,
   IonCardContent,
   IonButtons,
-  IonMenuButton,
+  IonButton,
   IonRefresher,
   IonRefresherContent,
 } from '@ionic/react'
-import { arrowDropup, chatboxes } from 'ionicons/icons'
+import { arrowDropup, chatboxes, contrast } from 'ionicons/icons'
 
-import { useGlobalState } from '../state'
+import { useGlobalState, toggleTheme } from '../state'
 import timeAgo from '../utils/timeAgo'
 import fetchData from '../utils/fetchData'
 
-type Props = RouteComponentProps<{}> & {
+type Props = {
   path: any
   title: string
 }
 
-const TabContent: React.FunctionComponent<Props> = ({ path, title }) => {
+const TabContent = ({ path, title }: Props) => {
   const [data] = useGlobalState(path)
   const [loading] = useGlobalState('loading')
   type Entry = typeof data[0]
@@ -38,15 +38,16 @@ const TabContent: React.FunctionComponent<Props> = ({ path, title }) => {
     e.detail.complete()
   }
 
-  return (
-    <>
+  return (<>
       <IonHeader>
         <IonToolbar className={path}>
-          <IonButtons slot="start">
-            <IonMenuButton />
-          </IonButtons>
           <IonTitle>{title}</IonTitle>
           {loading && <IonSpinner name="dots" slot="end" duration={30} />}
+          <IonButtons slot="end">
+              <IonButton onClick={toggleTheme}>
+                <IonIcon icon={contrast} slot="icon-only" />
+              </IonButton>
+            </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent>
