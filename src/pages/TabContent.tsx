@@ -1,6 +1,7 @@
 import React from 'react'
 import { RouteComponentProps } from 'react-router'
 import {
+  IonSpinner,
   IonContent,
   IonHeader,
   IonTitle,
@@ -17,83 +18,84 @@ import {
 } from '@ionic/react'
 import { arrowDropup, chatboxes } from 'ionicons/icons'
 
+import { useGlobalState } from '../state'
+import timeAgo from '../utils/timeAgo'
+
 type Props = RouteComponentProps<{}> & {
-  path: string
+  path: any
   title: string
 }
 
-const TabContent: React.FunctionComponent<Props> = ({ path, title }) => (
-  <>
-    <IonHeader>
-      <IonToolbar className={path}>
-        <IonButtons slot="start">
-          <IonMenuButton />
-        </IonButtons>
-        <IonTitle>{title}</IonTitle>
-      </IonToolbar>
-    </IonHeader>
-    <IonContent>
-      {[15, 22, 30, 74, 32, 67, 12, 23, 26, 78, 43, 55, 245].map((x) => (
-        <IonCard key={x} className={path}>
-          <IonCardHeader className="p-0">
-            <IonItem
-              button
-              onClick={() =>
-                window.open('https://himalay.com.np/about', '_system')
-              }
-              lines="none"
-            >
-              <IonAvatar className="favicon" slot="start">
-                <img
-                  alt="himalay.com.np"
-                  src="https://www.google.com/s2/favicons?domain=https://himalay.com.np/about"
-                />
-              </IonAvatar>
+const TabContent: React.FunctionComponent<Props> = ({ path, title }) => {
+  const [data] = useGlobalState(path)
+  const [loading] = useGlobalState('loading')
+  type Entry = typeof data[0]
+  return (
+    <>
+      <IonHeader>
+        <IonToolbar className={path}>
+          <IonButtons slot="start">
+            <IonMenuButton />
+          </IonButtons>
+          <IonTitle>{title}</IonTitle>
+          {loading && <IonSpinner name="dots" slot="end" duration={30} />}
+        </IonToolbar>
+      </IonHeader>
+      <IonContent>
+        {data.map((x: Entry) => (
+          <IonCard key={x._id} className={path}>
+            <IonCardHeader className="p-0">
+              <IonItem
+                button
+                onClick={() => window.open(x.source.targetUrl, '_system')}
+                lines="none"
+              >
+                <IonAvatar className="favicon" slot="start">
+                  <img
+                    alt={x.source.displayName}
+                    src={`https://www.google.com/s2/favicons?domain=${x.source.targetUrl}`}
+                  />
+                </IonAvatar>
 
-              <IonLabel className="item-text">
-                <h2>
-                  Multi-line {x} text that should wrap when it is too long
-                </h2>
-                <p>It is too long to fit on one line in the item.</p>
-              </IonLabel>
-            </IonItem>
-          </IonCardHeader>
+                <IonLabel className="item-text">
+                  <h2>{x.title}</h2>
+                  {x.description && <p>{x.description}</p>}
+                </IonLabel>
+              </IonItem>
+            </IonCardHeader>
 
-          <IonCardContent className="item-footer">
-            <a
-              className="sub-link"
-              href="https://google.com"
-              target="_system"
-              rel="noopener noreferrer"
-            >
-              300<IonIcon icon={arrowDropup.md}></IonIcon>
-            </a>
-            <a
-              className="sub-link"
-              href="https://google.com"
-              target="_system"
-              rel="noopener noreferrer"
-            >
-              10
-              <IonIcon
-                style={{ marginLeft: '.15em' }}
-                icon={chatboxes}
-              ></IonIcon>
-            </a>{' '}
-            an hour ago by{' '}
-            <a
-              className="sub-link"
-              href="https://google.com"
-              target="_system"
-              rel="noopener noreferrer"
-            >
-              username
-            </a>
-          </IonCardContent>
-        </IonCard>
-      ))}
-    </IonContent>
-  </>
-)
+            <IonCardContent className="item-footer">
+              <a
+                hidden={path === 'medium'}
+                className="sub-link"
+                href={x.source.sourceUrl}
+                target="_system"
+                rel="noopener noreferrer"
+              >
+                {x.source.likesCount}
+                <IonIcon icon={arrowDropup.md} className="up-arrow" />
+                {x.source.commentsCount}
+                <IonIcon style={{ marginLeft: '.15em' }} icon={chatboxes.md} />
+              </a>
+              {` ${timeAgo(x.source.createdAt)} by `}
+              <a
+                className="sub-link"
+                href={
+                  path === 'reddit'
+                    ? `https://reddit.com/u/${x.source.username}`
+                    : x.source.authorUrl
+                }
+                target="_system"
+                rel="noopener noreferrer"
+              >
+                {x.source.authorName || x.source.username}
+              </a>
+            </IonCardContent>
+          </IonCard>
+        ))}
+      </IonContent>
+    </>
+  )
+}
 
 export default React.memo(TabContent)

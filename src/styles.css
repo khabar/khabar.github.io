@@ -4,20 +4,20 @@
     align-items: center;
 }
 
-.hacker-news .sub-link, .hacker-news.tab-selected {
-    color: var(--ion-color-hacker-news) !important;
+.hackernews .sub-link, .hackernews.tab-selected {
+    color: var(--ion-color-hackernews) !important;
 }
 
 .github .sub-link, .github.tab-selected {
     color: var(--ion-color-github) !important;
 }
 
-.dev-community .sub-link, .dev-community.tab-selected {
-    color: var(--ion-color-dev-community) !important;
+.devto .sub-link, .devto.tab-selected {
+    color: var(--ion-color-devto) !important;
 }
 
-.echo-js .sub-link, .echo-js.tab-selected {
-    color: var(--ion-color-echo-js) !important;
+.echojs .sub-link, .echojs.tab-selected {
+    color: var(--ion-color-echojs) !important;
 }
 
 .reddit .sub-link, .reddit.tab-selected {
@@ -28,8 +28,8 @@
     color: var(--ion-color-medium) !important;
 }
 
-.product-hunt .sub-link, .product-hunt.tab-selected {
-    color: var(--ion-color-product-hunt) !important;
+.producthunt .sub-link, .producthunt.tab-selected {
+    color: var(--ion-color-producthunt) !important;
 }
 
 .p-0 {
@@ -37,7 +37,7 @@
 }
 
 .favicon {
-    padding: .5em 1em .5em 0;
+    padding: .7em 1.4em .7em 0;
     margin: 0;
 }
 
@@ -62,4 +62,9 @@
 
 .item-footer ion-icon {
     vertical-align: middle;
+}
+
+ion-icon.up-arrow {
+    font-size: 24px;
+    margin-left: -0.1em;
 }
