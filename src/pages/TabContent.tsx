@@ -1,9 +1,9 @@
 import React from 'react'
-import { RouteComponentProps } from 'react-router'
 import {
   IonSpinner,
   IonContent,
   IonHeader,
+  IonThumbnail,
   IonTitle,
   IonItem,
   IonLabel,
@@ -38,16 +38,25 @@ const TabContent = ({ path, title }: Props) => {
     e.detail.complete()
   }
 
-  return (<>
+  return (
+    <>
       <IonHeader>
         <IonToolbar className={path}>
+          <IonButtons slot="start">
+            <IonIcon slot="icon-only" src={require('../icons/logo.svg')} />
+          </IonButtons>
+
           <IonTitle>{title}</IonTitle>
           {loading && <IonSpinner name="dots" slot="end" duration={30} />}
           <IonButtons slot="end">
-              <IonButton onClick={toggleTheme}>
-                <IonIcon icon={contrast} slot="icon-only" />
-              </IonButton>
-            </IonButtons>
+            <IonButton onClick={toggleTheme}>
+              <IonIcon
+                className="theme-toggle"
+                icon={contrast}
+                slot="icon-only"
+              />
+            </IonButton>
+          </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent>

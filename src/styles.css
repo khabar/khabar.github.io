@@ -8,6 +8,10 @@ ion-toolbar ion-spinner {
     align-items: center;
 }
 
+.theme-toggle {
+    color: var(--ion-color-theme-toggle);
+}
+
 .hackernews .sub-link, .hackernews.tab-selected {
     color: var(--ion-color-hackernews) !important;
 }

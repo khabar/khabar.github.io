@@ -9,9 +9,9 @@ import {
   IonTitle,
   IonToolbar,
   IonThumbnail,
+  IonIcon,
 } from '@ionic/react'
 import { RouteComponentProps, withRouter } from 'react-router'
-import Logo from './Logo'
 
 type Props = RouteComponentProps<{}>
 
@@ -20,7 +20,7 @@ const Menu: React.FunctionComponent<Props> = ({ history }) => (
     <IonHeader>
       <IonToolbar>
         <IonThumbnail className="menu-logo" slot="start">
-          <Logo />
+          <IonIcon src={require('../icons/logo.svg')} />
         </IonThumbnail>
         <IonTitle>Khabar</IonTitle>
       </IonToolbar>

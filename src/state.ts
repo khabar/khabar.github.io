@@ -24,7 +24,7 @@ export const setLoading = (isLoading: boolean) => {
 }
 
 export const toggleTheme = () => {
-  let theme = window.localStorage['theme']
+  let theme = window.localStorage['theme'] || 'dark'
   document.body.classList.remove(theme)
   theme = theme === 'dark' ? 'light' : 'dark'
   document.body.classList.add(theme)
