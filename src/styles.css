@@ -1,3 +1,7 @@
+ion-toolbar ion-spinner {
+    margin-right: 1em;
+}
+
 .menu-logo {
     display: flex;
     justify-content: center;
