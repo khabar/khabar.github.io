@@ -7,8 +7,14 @@ import {
   IonTabs,
 } from '@ionic/react'
 import React from 'react'
-import { Redirect, Route } from 'react-router'
+import { Route } from 'react-router'
 import sources from '../sources'
+
+const { path: path0, title: title0, component: Component0 } = sources[0]
+
+const { pathname } = window.location
+const isSelected = (path: any) =>
+  (pathname === '/' && path === path0) || pathname === path
 
 const Tabs: React.FunctionComponent = () => (
   <IonPage>
@@ -22,10 +28,13 @@ const Tabs: React.FunctionComponent = () => (
               <Component {...props} title={title} path={path} />
             )}
           />
-        ))}
+        ))} 
         <Route
+          exact={true}
           path="/"
-          render={() => <Redirect to={`/${sources[0].path}`} />}
+          render={(props: any) => (
+            <Component0 {...props} title={title0} path={path0} />
+          )}
         />
       </IonRouterOutlet>
       <IonTabBar slot="bottom">
@@ -35,6 +44,7 @@ const Tabs: React.FunctionComponent = () => (
             className={path}
             tab={path}
             href={`/${path}`}
+            selected={isSelected(path)}
           >
             <IonIcon {...(icon ? { icon } : { src })} />
           </IonTabButton>
