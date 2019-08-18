@@ -42,7 +42,7 @@ const TabContent = ({ path, title }: Props) => {
       <IonHeader>
         <IonToolbar className={path}>
           <IonButtons slot="start">
-            <IonIcon slot="icon-only" src={require('../icons/logo.svg')} />
+            <IonIcon title="Khabar" slot="icon-only" src={require('../icons/logo.svg')} />
           </IonButtons>
 
           <IonTitle>{title}</IonTitle>
@@ -50,6 +50,7 @@ const TabContent = ({ path, title }: Props) => {
           <IonButtons slot="end">
             <IonButton onClick={toggleTheme}>
               <IonIcon
+                title="Toggle theme"
                 className="theme-toggle"
                 icon={contrast}
                 slot="icon-only"
@@ -93,9 +94,9 @@ const TabContent = ({ path, title }: Props) => {
                 rel="noopener noreferrer"
               >
                 {x.source.likesCount}
-                <IonIcon icon={arrowDropup.md} className="up-arrow" />
+                <IonIcon title="Up-votes" icon={arrowDropup.md} className="up-arrow" />
                 {x.source.commentsCount}
-                <IonIcon style={{ marginLeft: '.15em' }} icon={chatboxes.md} />
+                <IonIcon title="Comments" style={{ marginLeft: '.15em' }} icon={chatboxes.md} />
               </a>
               {` ${timeAgo(x.source.createdAt)} by `}
               <a

@@ -12,10 +12,6 @@ import sources from '../sources'
 
 const { path: path0, title: title0, component: Component0 } = sources[0]
 
-const { pathname } = window.location
-const isSelected = (path: any) =>
-  (pathname === '/' && path === path0) || pathname === path
-
 const Tabs: React.FunctionComponent = () => (
   <IonPage>
     <IonTabs>
@@ -28,7 +24,7 @@ const Tabs: React.FunctionComponent = () => (
               <Component {...props} title={title} path={path} />
             )}
           />
-        ))} 
+        ))}
         <Route
           exact={true}
           path="/"
@@ -38,15 +34,15 @@ const Tabs: React.FunctionComponent = () => (
         />
       </IonRouterOutlet>
       <IonTabBar slot="bottom">
-        {sources.map(({ path, icon, src }) => (
+        {sources.map(({ path, title, icon, src }) => (
           <IonTabButton
             key={path}
             className={path}
             tab={path}
             href={`/${path}`}
-            selected={isSelected(path)}
+            selected={window.location.pathname === '/' && path === path0}
           >
-            <IonIcon {...(icon ? { icon } : { src })} />
+            <IonIcon title={title} {...(icon ? { icon } : { src })} />
           </IonTabButton>
         ))}
       </IonTabBar>
@@ -54,4 +50,4 @@ const Tabs: React.FunctionComponent = () => (
   </IonPage>
 )
 
-export default Tabs
+export default React.memo(Tabs)
