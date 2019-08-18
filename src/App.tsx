@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Switch, Route } from 'react-router-dom'
 import { IonApp, IonPage } from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
@@ -28,7 +28,12 @@ import '@ionic/react/css/display.css'
 import './theme/variables.css'
 import './styles.css'
 
-const App: React.FunctionComponent = () => (
+const App: React.FunctionComponent = () => {
+  useEffect(() => {
+    fetchData().catch(console.error)
+  }, [])
+
+  return (
   <GlobalStateProvider>
     <IonApp>
       <IonReactRouter>
@@ -43,7 +48,6 @@ const App: React.FunctionComponent = () => (
     </IonApp>
   </GlobalStateProvider>
 )
-
-fetchData().catch(console.error)
+}
 
 export default App

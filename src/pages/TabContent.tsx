@@ -3,7 +3,6 @@ import {
   IonSpinner,
   IonContent,
   IonHeader,
-  IonThumbnail,
   IonTitle,
   IonItem,
   IonLabel,
