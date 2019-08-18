@@ -1,12 +1,9 @@
 import React, { useEffect } from 'react'
-import { Switch, Route } from 'react-router-dom'
 import { IonApp, IonPage } from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
 import { GlobalStateProvider } from './state'
 import fetchData from './utils/fetchData'
-// import Menu from './components/Menu'
 import Tabs from './components/Tabs'
-import About from './pages/About'
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css'
@@ -34,20 +31,16 @@ const App: React.FunctionComponent = () => {
   }, [])
 
   return (
-  <GlobalStateProvider>
-    <IonApp>
-      <IonReactRouter>
-        {/* <Menu /> */}
-        <IonPage id="main">
-          <Switch>
-            <Route path="/about" component={About} />
-            <Route path="/" component={Tabs} />
-          </Switch>
-        </IonPage>
-      </IonReactRouter>
-    </IonApp>
-  </GlobalStateProvider>
-)
+    <GlobalStateProvider>
+      <IonApp>
+        <IonReactRouter>
+          <IonPage id="main">
+            <Tabs />
+          </IonPage>
+        </IonReactRouter>
+      </IonApp>
+    </GlobalStateProvider>
+  )
 }
 
 export default App

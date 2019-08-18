@@ -16,24 +16,22 @@ const Tabs: React.FunctionComponent = () => (
       <IonRouterOutlet>
         {sources.map(({ path, title, component: Component }) => (
           <Route
-            key={path}
+            key={title}
             path={`/:tab(${path})`}
             render={(props: any) => (
               <Component {...props} title={title} path={path} />
             )}
-            exact
           />
         ))}
         <Route
           path="/"
           render={() => <Redirect to={`/${sources[0].path}`} />}
-          exact
         />
       </IonRouterOutlet>
       <IonTabBar slot="bottom">
         {sources.map(({ path, icon, src }) => (
           <IonTabButton
-            key={`tab-${path}`}
+            key={path}
             className={path}
             tab={path}
             href={`/${path}`}
