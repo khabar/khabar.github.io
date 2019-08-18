@@ -1,5 +1,10 @@
 import { logoHackernews, logoGithub } from 'ionicons/icons'
 
+import devto from './icons/devto.svg'
+import echojs from './icons/echojs.svg'
+import reddit from './icons/reddit.svg'
+import medium from './icons/medium.svg'
+import producthunt from './icons/producthunt.svg'
 import TabContent from './pages/TabContent'
 
 const sources = [
@@ -18,31 +23,31 @@ const sources = [
   {
     path: 'devto',
     component: TabContent,
-    src: require('./icons/devto.svg'),
+    src: devto,
     title: 'DEV Community',
   },
   {
     path: 'echojs',
     component: TabContent,
-    src: require('./icons/echojs.svg'),
+    src: echojs,
     title: 'Echo JS',
   },
   {
     path: 'reddit',
     component: TabContent,
-    src: require('./icons/reddit.svg'),
+    src: reddit,
     title: 'Reddit: Programming',
   },
   {
     path: 'medium',
     component: TabContent,
-    src: require('./icons/medium.svg'),
+    src: medium,
     title: 'Medium',
   },
   {
     path: 'producthunt',
     component: TabContent,
-    src: require('./icons/producthunt.svg'),
+    src: producthunt,
     title: 'Product Hunt',
   },
 ]
