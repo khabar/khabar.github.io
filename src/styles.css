@@ -12,32 +12,64 @@ ion-toolbar ion-spinner {
     color: var(--ion-color-theme-toggle);
 }
 
-.hackernews .sub-link, .hackernews.tab-selected {
-    color: var(--ion-color-hackernews) !important;
+.hackernews {
+    --indicator-color-checked: var(--ion-color-hackernews);
+    --color-checked: var(--ion-color-hackernews);
+    --ion-color-primary: var(--ion-color-hackernews);
 }
 
-.github .sub-link, .github.tab-selected {
-    color: var(--ion-color-github) !important;
+.github {
+    --indicator-color-checked: var(--ion-color-github);
+    --color-checked: var(--ion-color-github);
+    --ion-color-primary: var(--ion-color-github);
 }
 
-.devto .sub-link, .devto.tab-selected {
-    color: var(--ion-color-devto) !important;
+.devto {
+    --indicator-color-checked: var(--ion-color-devto);
+    --color-checked: var(--ion-color-devto);
+    --ion-color-primary: var(--ion-color-devto);
 }
 
-.echojs .sub-link, .echojs.tab-selected {
-    color: var(--ion-color-echojs) !important;
+.echojs {
+    --indicator-color-checked: var(--ion-color-echojs);
+    --color-checked: var(--ion-color-echojs);
+    --ion-color-primary: var(--ion-color-echojs);
 }
 
-.reddit .sub-link, .reddit.tab-selected {
-    color: var(--ion-color-reddit) !important;
+.reddit {
+    --indicator-color-checked: var(--ion-color-reddit);
+    --color-checked: var(--ion-color-reddit);
+    --ion-color-primary: var(--ion-color-reddit);
 }
 
-.medium .sub-link, .medium.tab-selected {
-    color: var(--ion-color-medium) !important;
+.medium {
+    --indicator-color-checked: var(--ion-color-medium);
+    --color-checked: var(--ion-color-medium);
+    --ion-color-primary: var(--ion-color-medium);
 }
 
-.producthunt .sub-link, .producthunt.tab-selected {
-    color: var(--ion-color-producthunt) !important;
+.producthunt {
+    --indicator-color-checked: var(--ion-color-producthunt);
+    --color-checked: var(--ion-color-producthunt);
+    --ion-color-primary: var(--ion-color-producthunt);
+}
+
+.redditprogramming {
+    --indicator-color-checked: var(--ion-color-redditprogramming);
+    --color-checked: var(--ion-color-redditprogramming);
+    --ion-color-primary: var(--ion-color-redditprogramming);
+}
+
+.datatau {
+    --indicator-color-checked: var(--ion-color-datatau);
+    --color-checked: var(--ion-color-datatau);
+    --ion-color-primary: var(--ion-color-datatau);
+}
+
+.growthhackers {
+    --indicator-color-checked: var(--ion-color-growthhackers);
+    --color-checked: var(--ion-color-growthhackers);
+    --ion-color-primary: var(--ion-color-growthhackers);
 }
 
 .p-0 {

@@ -84,7 +84,9 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-reddit: #ff4500;
   --ion-color-medium: #00ab6c;
   --ion-color-producthunt: #da552e;
-  --ion-color-producthunt: #da552e;
+  --ion-color-datatau: #03b4b4;
+  --ion-color-redditprogramming: #1c83d0;
+  --ion-color-growthhackers: #12ac8e;
 
   --ion-color-theme-toggle: var(--ion-color-dark);
 }

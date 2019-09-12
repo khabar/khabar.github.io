@@ -3,7 +3,7 @@ import { IonApp, IonPage } from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
 import { GlobalStateProvider } from './state'
 import fetchData from './utils/fetchData'
-import Tabs from './components/Tabs'
+import Home from './pages/Home'
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css'
@@ -35,7 +35,7 @@ const App: React.FunctionComponent = () => {
       <IonApp>
         <IonReactRouter>
           <IonPage id="main">
-            <Tabs />
+            <Home />
           </IonPage>
         </IonReactRouter>
       </IonApp>

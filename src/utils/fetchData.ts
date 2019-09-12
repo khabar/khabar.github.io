@@ -6,7 +6,10 @@ const sources = [
   ['echojs', 'echojs'],
   ['devto', 'devto'],
   ['medium', 'medium'],
-  ['reddit', 'redditprogramming'],
+  ['reddit', 'reddit'],
+  ['growthhackers', 'growthHackers'],
+  ['datatau', 'datatau'],
+  ['redditprogramming', 'redditprogramming'],
   ['producthunt', 'productHunt'],
 ]
 
@@ -15,10 +18,11 @@ const baseURL =
 const options = { headers: { Origin: 'https://khabar.github.io/' } }
 
 const fetchAndSave = async (key: string, source: string) => {
-  const data = await (await fetch(
+  const data = (await (await fetch(
     baseURL + source,
     options,
-  )).json()
+  )).json())
+  .filter((x: any) => x.source.likesCount === undefined || x.source.likesCount)
 
   setState(key, data)
 }

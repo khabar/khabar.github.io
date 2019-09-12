@@ -1,15 +1,22 @@
 import { createGlobalState } from 'react-hooks-global-state'
 
+import sources from './sources'
+const { path } = sources[0]
+
 const getPersistedState = (key: string) => JSON.parse(window.localStorage[key] || '[]')
 const initialState = {
+  segment: path,
   loading: false,
   theme: window.localStorage['theme'] || 'dark',
   hackernews: getPersistedState('hackernews'),
   github: getPersistedState('github'),
   echojs: getPersistedState('echojs'),
   devto: getPersistedState('devto'),
+  redditprogramming: getPersistedState('redditprogramming'),
+  datatau: getPersistedState('datatau'),
   medium: getPersistedState('medium'),
   reddit: getPersistedState('reddit'),
+  growthhackers: getPersistedState('growthhackers'),
   producthunt: getPersistedState('producthunt'),
 }
 
@@ -35,6 +42,10 @@ export const toggleTheme = () => {
 export const setState = (key: any, value: Array<object | null>) => {
   setGlobalState(key, value)
   window.localStorage[key] = JSON.stringify(value)
+}
+
+export const setSegment = (value: string) => {
+  setGlobalState('segment', value)
 }
 
 export { GlobalStateProvider, useGlobalState }
