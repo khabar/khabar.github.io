@@ -19,6 +19,7 @@ import {
   IonToolbar,
   IonFooter,
 } from '@ionic/react'
+import { Plugins } from '@capacitor/core'
 import React from 'react'
 import { arrowDropup, chatboxes, contrast } from 'ionicons/icons'
 
@@ -44,6 +45,8 @@ const Home = () => {
   }
 
   const updateSegment = (e: any) => setSegment(e.detail.value)
+
+  const openUrl = (url: string) => async () => await Plugins.Browser.open({ url })
 
   return (
     <>
@@ -81,7 +84,7 @@ const Home = () => {
             <IonCardHeader className="p-0">
               <IonItem
                 button
-                onClick={() => window.open(x.source.targetUrl, '_system')}
+                onClick={openUrl(x.source.targetUrl)}
                 lines="none"
               >
                 <IonAvatar className="favicon" slot="start">

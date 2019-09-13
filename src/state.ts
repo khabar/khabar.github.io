@@ -1,4 +1,5 @@
 import { createGlobalState } from 'react-hooks-global-state'
+import { Plugins } from '@capacitor/core'
 
 import sources from './sources'
 const { path } = sources[0]
@@ -39,9 +40,10 @@ export const toggleTheme = () => {
   window.localStorage['theme'] = theme
 }
 
-export const setState = (key: any, value: Array<object | null>) => {
+export const setState = async (key: any, value: Array<object | null>) => {
   setGlobalState(key, value)
   window.localStorage[key] = JSON.stringify(value)
+  await Plugins.Browser.prefetch({ urls: value.map((x: any) => x.source.targetUrl) })
 }
 
 export const setSegment = (value: string) => {
