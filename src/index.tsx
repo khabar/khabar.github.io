@@ -1,11 +1,16 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { Plugins } from '@capacitor/core'
 
 import App from './App'
 import * as serviceWorker from './serviceWorker';
 
 const theme = window.localStorage['theme'] || 'dark'
 document.body.classList.add(theme)
+
+Plugins.App.addListener('backButton', () => {
+    Plugins.App.exitApp()
+})
 
 ReactDOM.render(<App />, document.getElementById('root'))
 

@@ -8,7 +8,6 @@ import medium from './icons/medium.svg'
 import producthunt from './icons/producthunt.svg'
 import datatau from './icons/datatau.svg'
 import growthhackers from './icons/growthhackers.svg'
-import TabContent from './pages/TabContent'
 
 const sources = [
   {

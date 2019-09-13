@@ -44,7 +44,7 @@ const Home = () => {
   }
 
   const updateSegment = (e: any) => setSegment(e.detail.value)
-console.log(segment)
+
   return (
     <>
       <IonHeader>
