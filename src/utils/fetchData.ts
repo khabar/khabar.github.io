@@ -24,9 +24,8 @@ const fetchAndSave = async (key: string, source: string) => {
   )).json())
   .filter((x: any) => x.source.likesCount === undefined || x.source.likesCount)
 
-  setState(key, data)
+  await setState(key, data)
 }
-
 
 const fetchData = async (sourceKey?: string) => {
   try {
@@ -35,19 +34,9 @@ const fetchData = async (sourceKey?: string) => {
         if (source) await fetchAndSave(sourceKey, source[1])
     } else {
       setLoading(true)
-      await Promise.all(
-        sources.map(
-          ([key, source]) =>
-            new Promise(async (resolve, reject) => {
-              try {
-                await fetchAndSave(key, source)
-                resolve()
-              } catch (error) {
-                reject(error)
-              }
-            }),
-        ),
-      )
+      for (let [key, source] of sources) {
+        await fetchAndSave(key, source)
+      }
     }
   } catch (error) {
     console.error(error)

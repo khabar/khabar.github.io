@@ -108,3 +108,9 @@ ion-icon.up-arrow {
     font-size: 24px;
     margin-left: -0.1em;
 }
+
+ion-slide.cards {
+    display: block;
+    text-align: left;
+    height: 100%;
+}

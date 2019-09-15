@@ -1,8 +1,7 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { IonApp, IonPage } from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
 import { GlobalStateProvider } from './state'
-import fetchData from './utils/fetchData'
 import Home from './pages/Home'
 
 /* Core CSS required for Ionic components to work properly */
@@ -26,10 +25,6 @@ import './theme/variables.css'
 import './styles.css'
 
 const App: React.FunctionComponent = () => {
-  useEffect(() => {
-    fetchData().catch(console.error)
-  }, [])
-
   return (
     <GlobalStateProvider>
       <IonApp>
