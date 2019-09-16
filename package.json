@@ -10,13 +10,13 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "@capacitor/android": "^1.1.1",
-    "@capacitor/cli": "^1.1.1",
-    "@capacitor/core": "^1.1.1",
-    "@capacitor/ios": "^1.1.1",
+    "@capacitor/android": "^1.2.0",
+    "@capacitor/cli": "^1.2.0",
+    "@capacitor/core": "^1.2.0",
+    "@capacitor/ios": "^1.2.0",
     "@ionic/react": "^4.8.0-rc.0",
     "@ionic/react-router": "^4.8.0-rc.0",
-    "ionicons": "^4.6.2",
+    "ionicons": "^4.6.3",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-hooks-global-state": "^0.14.0",
@@ -24,21 +24,21 @@
     "react-router-dom": "^5.0.1"
   },
   "devDependencies": {
-    "@types/jest": "24.0.17",
-    "@types/node": "12.7.2",
-    "@types/react": "^16.9.1",
-    "@types/react-dom": "^16.8.5",
+    "@types/jest": "24.0.18",
+    "@types/node": "12.7.5",
+    "@types/react": "^16.9.2",
+    "@types/react-dom": "^16.9.0",
     "@types/react-router": "^5.0.3",
-    "@types/react-router-dom": "^4.3.1",
+    "@types/react-router-dom": "^4.3.5",
     "gh-pages": "^2.1.1",
     "prettier": "^1.18.2",
     "react-scripts": "3.1.1",
-    "tslint": "^5.18.0",
+    "tslint": "^5.20.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-config-standard": "^8.0.1",
     "tslint-consistent-codestyle": "^1.15.1",
     "tslint-react": "^4.0.0",
-    "typescript": "3.5.3"
+    "typescript": "3.6.3"
   },
   "eslintConfig": {
     "extends": "react-app"
