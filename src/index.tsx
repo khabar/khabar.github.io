@@ -4,7 +4,6 @@ import { Plugins } from '@capacitor/core'
 
 import App from './App'
 import * as serviceWorker from './serviceWorker'
-import fetchData from './utils/fetchData'
 
 const theme = window.localStorage['theme'] || 'dark'
 document.body.classList.add(theme)
@@ -26,6 +25,3 @@ ReactDOM.render(<App />, document.getElementById('root'))
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: http://bit.ly/CRA-PWA
 serviceWorker.register()
-
-
-fetchData().catch(console.error)
