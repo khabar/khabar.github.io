@@ -19,6 +19,7 @@ const initialState = {
   reddit: getPersistedState('reddit'),
   growthhackers: getPersistedState('growthhackers'),
   producthunt: getPersistedState('producthunt'),
+  stackoverflow: getPersistedState('stackoverflow'),
 }
 
 const {

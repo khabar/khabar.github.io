@@ -72,6 +72,12 @@ ion-toolbar ion-spinner {
     --ion-color-primary: var(--ion-color-growthhackers);
 }
 
+.stackoverflow {
+    --indicator-color-checked: var(--ion-color-stackoverflow);
+    --color-checked: var(--ion-color-stackoverflow);
+    --ion-color-primary: var(--ion-color-stackoverflow);
+}
+
 .p-0 {
     padding: 0;
 }

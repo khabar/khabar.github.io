@@ -8,6 +8,7 @@ import medium from './icons/medium.svg'
 import producthunt from './icons/producthunt.svg'
 import datatau from './icons/datatau.svg'
 import growthhackers from './icons/growthhackers.svg'
+import stackoverflow from './icons/stackoverflow.svg'
 
 const sources = [
   {
@@ -59,6 +60,11 @@ const sources = [
     path: 'producthunt',
     src: producthunt,
     title: 'Product Hunt',
+  },
+  {
+    path: 'stackoverflow',
+    src: stackoverflow,
+    title: 'Stack Overflow',
   },
 ]
 
