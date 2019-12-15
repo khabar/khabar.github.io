@@ -1,6 +1,6 @@
 {
   "name": "Khabar",
-  "version": "0.0.2",
+  "version": "1.0.5",
   "private": true,
   "scripts": {
     "start": "react-scripts start",
@@ -10,35 +10,35 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "@capacitor/android": "^1.2.0",
-    "@capacitor/cli": "^1.2.0",
-    "@capacitor/core": "^1.2.0",
-    "@capacitor/ios": "^1.2.0",
-    "@ionic/react": "^4.8.0-rc.0",
-    "@ionic/react-router": "^4.8.0-rc.0",
+    "@capacitor/android": "^1.4.0",
+    "@capacitor/cli": "^1.4.0",
+    "@capacitor/core": "^1.4.0",
+    "@capacitor/ios": "^1.4.0",
+    "@ionic/react": "^4.11.7",
+    "@ionic/react-router": "^4.11.7",
     "ionicons": "^4.6.3",
-    "react": "^16.9.0",
-    "react-dom": "^16.9.0",
-    "react-hooks-global-state": "^0.14.0",
-    "react-router": "^5.0.1",
-    "react-router-dom": "^5.0.1"
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-hooks-global-state": "^0.16.0",
+    "react-router": "^5.1.2",
+    "react-router-dom": "^5.1.2"
   },
   "devDependencies": {
-    "@types/jest": "24.0.18",
-    "@types/node": "12.7.5",
-    "@types/react": "^16.9.2",
-    "@types/react-dom": "^16.9.0",
-    "@types/react-router": "^5.0.3",
-    "@types/react-router-dom": "^4.3.5",
+    "@types/jest": "24.0.23",
+    "@types/node": "12.12.17",
+    "@types/react": "^16.9.16",
+    "@types/react-dom": "^16.9.4",
+    "@types/react-router": "^5.1.3",
+    "@types/react-router-dom": "^5.1.3",
     "gh-pages": "^2.1.1",
-    "prettier": "^1.18.2",
-    "react-scripts": "3.1.1",
-    "tslint": "^5.20.0",
+    "prettier": "^1.19.1",
+    "react-scripts": "3.3.0",
+    "tslint": "^5.20.1",
     "tslint-config-prettier": "^1.18.0",
-    "tslint-config-standard": "^8.0.1",
-    "tslint-consistent-codestyle": "^1.15.1",
-    "tslint-react": "^4.0.0",
-    "typescript": "3.6.3"
+    "tslint-config-standard": "^9.0.0",
+    "tslint-consistent-codestyle": "^1.16.0",
+    "tslint-react": "^4.1.0",
+    "typescript": "3.7.3"
   },
   "eslintConfig": {
     "extends": "react-app"
