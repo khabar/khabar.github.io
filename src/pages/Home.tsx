@@ -22,8 +22,8 @@ import {
   IonSlide,
 } from '@ionic/react'
 import { Plugins } from '@capacitor/core'
-import React from 'react'
-import { arrowDropup, chatboxes, contrast } from 'ionicons/icons'
+import React, { useState } from 'react'
+import { caretUp, chatbubble, contrast } from 'ionicons/icons'
 
 import sources from '../sources'
 import { useGlobalState, toggleTheme, setSegment } from '../state'
@@ -37,25 +37,29 @@ type Source = {
 const _contentRef = React.createRef<any>()
 const _slidesRef = React.createRef<any>()
 
-const updateSegment = async (e: any) =>
-  await _slidesRef.current.slideTo(+e.detail.value)
-
-const openUrl = (url: string) => async () =>
-  await Plugins.Browser.open({ url })
-
-const onSlideChange = async () =>{
-  setSegment(sources[await _slidesRef.current.getActiveIndex()].path)
-  _contentRef.current.scrollToTop()
-}
-
 const Home = () => {
   const [segment] = useGlobalState('segment')
   const source = sources.find(({ path }) => path === segment) as Source
   const [loading] = useGlobalState('loading')
+  const [currentSegment, setCurrentSegment] = useState(sources[0].path)
 
   const doRefresh = async (e: any) => {
     await fetchData(segment)
     e.detail.complete()
+  }
+
+  const openUrl = (url: string) => async () =>
+    await Plugins.Browser.open({ url })
+
+  const updateSegment = async (e: any) => {
+    console.log(e)
+    setCurrentSegment(e.detail.value)
+    await _slidesRef.current.slideTo(+e.explicitOriginalTarget.dataset.index)
+  }
+
+  const onSlideChange = async () => {
+    setSegment(sources[await _slidesRef.current.getActiveIndex()].path)
+    _contentRef.current.scrollToTop()
   }
 
   return (
@@ -137,14 +141,14 @@ const Home = () => {
                           {x.source.likesCount}
                           <IonIcon
                             title="Up-votes"
-                            icon={arrowDropup.md}
+                            icon={caretUp}
                             className="up-arrow"
                           />
                           {x.source.commentsCount}
                           <IonIcon
                             title="Comments"
                             style={{ marginLeft: '.15em' }}
-                            icon={chatboxes.md}
+                            icon={chatbubble}
                           />
                         </a>
                         {` ${timeAgo(x.source.createdAt)} by `}
@@ -169,13 +173,13 @@ const Home = () => {
         </IonSlides>
       </IonContent>
       <IonFooter className={segment}>
-        <IonSegment scrollable onIonChange={updateSegment}>
+        <IonSegment
+          scrollable
+          onIonChange={updateSegment}
+          value={currentSegment}
+        >
           {sources.map(({ path, title, icon, src }, i) => (
-            <IonSegmentButton
-              key={path}
-              value={'' + i}
-              checked={segment === path}
-            >
+            <IonSegmentButton key={path} value={path} data-index={'' + i}>
               <IonIcon title={title} {...(icon ? { icon } : { src })} />
             </IonSegmentButton>
           ))}

@@ -2,7 +2,6 @@ import React from 'react'
 import { IonApp, IonPage } from '@ionic/react'
 import { IonReactRouter } from '@ionic/react-router'
 
-import { GlobalStateProvider } from './state'
 import Home from './pages/Home'
 import fetchData from './utils/fetchData'
 
@@ -29,15 +28,13 @@ import './styles.css'
 const App: React.FunctionComponent = () => {
   fetchData().catch(console.error)
   return (
-    <GlobalStateProvider>
-      <IonApp>
-        <IonReactRouter>
-          <IonPage id="main">
-            <Home />
-          </IonPage>
-        </IonReactRouter>
-      </IonApp>
-    </GlobalStateProvider>
+    <IonApp>
+      <IonReactRouter>
+        <IonPage id="main">
+          <Home />
+        </IonPage>
+      </IonReactRouter>
+    </IonApp>
   )
 }
 

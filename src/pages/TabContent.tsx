@@ -17,7 +17,7 @@ import {
   IonRefresher,
   IonRefresherContent,
 } from '@ionic/react'
-import { arrowDropup, chatboxes, contrast } from 'ionicons/icons'
+import { caretUp, chatbubble, contrast } from 'ionicons/icons'
 
 import { useGlobalState, toggleTheme } from '../state'
 import timeAgo from '../utils/timeAgo'
@@ -42,7 +42,11 @@ const TabContent = ({ path, title }: Props) => {
       <IonHeader>
         <IonToolbar className={path}>
           <IonButtons slot="start">
-            <IonIcon title="Khabar" slot="icon-only" src={require('../icons/logo.svg')} />
+            <IonIcon
+              title="Khabar"
+              slot="icon-only"
+              src={require('../icons/logo.svg')}
+            />
           </IonButtons>
 
           <IonTitle>{title}</IonTitle>
@@ -94,9 +98,13 @@ const TabContent = ({ path, title }: Props) => {
                 rel="noopener noreferrer"
               >
                 {x.source.likesCount}
-                <IonIcon title="Up-votes" icon={arrowDropup.md} className="up-arrow" />
+                <IonIcon title="Up-votes" icon={caretUp} className="up-arrow" />
                 {x.source.commentsCount}
-                <IonIcon title="Comments" style={{ marginLeft: '.15em' }} icon={chatboxes.md} />
+                <IonIcon
+                  title="Comments"
+                  style={{ marginLeft: '.15em' }}
+                  icon={chatbubble}
+                />
               </a>
               {` ${timeAgo(x.source.createdAt)} by `}
               <a

@@ -4,7 +4,8 @@ import { Plugins } from '@capacitor/core'
 import sources from './sources'
 const { path } = sources[0]
 
-const getPersistedState = (key: string) => JSON.parse(window.localStorage[key] || '[]')
+const getPersistedState = (key: string) =>
+  JSON.parse(window.localStorage[key] || '[]')
 const initialState = {
   segment: path,
   loading: false,
@@ -22,11 +23,7 @@ const initialState = {
   stackoverflow: getPersistedState('stackoverflow'),
 }
 
-const {
-  GlobalStateProvider,
-  setGlobalState,
-  useGlobalState,
-} = createGlobalState(initialState)
+const { setGlobalState, useGlobalState } = createGlobalState(initialState)
 
 export const setLoading = (isLoading: boolean) => {
   setGlobalState('loading', isLoading)
@@ -44,11 +41,13 @@ export const toggleTheme = () => {
 export const setState = async (key: any, value: Array<object | null>) => {
   setGlobalState(key, value)
   window.localStorage[key] = JSON.stringify(value)
-  await Plugins.Browser.prefetch({ urls: value.map((x: any) => x.source.targetUrl) })
+  await Plugins.Browser.prefetch({
+    urls: value.map((x: any) => x.source.targetUrl),
+  })
 }
 
 export const setSegment = (value: string) => {
   setGlobalState('segment', value)
 }
 
-export { GlobalStateProvider, useGlobalState }
+export { useGlobalState }
