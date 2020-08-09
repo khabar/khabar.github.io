@@ -1253,7 +1253,7 @@
   dependencies:
     "@hapi/hoek" "^8.3.0"
 
-"@ionic/core@5.3.1":
+"@ionic/core@5.3.1", "@ionic/core@^5.3.1":
   version "5.3.1"
   resolved "https://registry.yarnpkg.com/@ionic/core/-/core-5.3.1.tgz#0b5852b0977063ab0c2a4d3da799fae7ff3d6228"
   integrity sha512-psOiYZbpL5uGKi7MZ9BXCfQIdJVVVW1n8AvrWAiifFE/ebI1x0wbO+D5QLmF2Mc2t/d0nbk4N1V8XyF2bjjiLg==
