@@ -1,9 +1,11 @@
 import React from 'react'
-import { IonApp, IonPage } from '@ionic/react'
+import { IonApp, IonPage, IonRouterOutlet } from '@ionic/react'
+import { Route } from 'react-router-dom'
 import { IonReactRouter } from '@ionic/react-router'
 
 import Home from './pages/Home'
-import fetchData from './utils/fetchData'
+import Feeds from './pages/Feeds'
+import Reorder from './pages/Reorder'
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css'
@@ -25,17 +27,19 @@ import '@ionic/react/css/display.css'
 import './theme/variables.css'
 import './styles.css'
 
-const App: React.FunctionComponent = () => {
-  fetchData().catch(console.error)
-  return (
-    <IonApp>
-      <IonReactRouter>
-        <IonPage id="main">
-          <Home />
-        </IonPage>
-      </IonReactRouter>
-    </IonApp>
-  )
-}
+const App: React.FunctionComponent = () => (
+  <IonApp>
+    <IonReactRouter>
+      <IonPage id="main">
+        <IonRouterOutlet id="main">
+          <Route path="/feeds" component={Feeds} exact />
+          <Route path="/reorder" component={Reorder} exact />
+          <Route path="/" component={Home} exact />
+          <Route component={Home} />
+        </IonRouterOutlet>
+      </IonPage>
+    </IonReactRouter>
+  </IonApp>
+)
 
 export default App

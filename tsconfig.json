@@ -17,9 +17,15 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "downlevelIteration": true
   },
   "include": [
-    "src"
+    "src",
+    "types/global.d.ts"
+  ],
+  "typeRoots": [
+    "./types",
+    "./node_modules/@types"
   ]
 }

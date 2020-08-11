@@ -1,122 +1,163 @@
 ion-toolbar ion-spinner {
-    margin-right: 1em;
+  margin-right: 1em;
 }
 
 .menu-logo {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .theme-toggle {
-    color: var(--ion-color-theme-toggle);
-}
-
-.hackernews {
-    --indicator-color-checked: var(--ion-color-hackernews);
-    --color-checked: var(--ion-color-hackernews);
-    --ion-color-primary: var(--ion-color-hackernews);
-}
-
-.github {
-    --indicator-color-checked: var(--ion-color-github);
-    --color-checked: var(--ion-color-github);
-    --ion-color-primary: var(--ion-color-github);
-}
-
-.devto {
-    --indicator-color-checked: var(--ion-color-devto);
-    --color-checked: var(--ion-color-devto);
-    --ion-color-primary: var(--ion-color-devto);
-}
-
-.echojs {
-    --indicator-color-checked: var(--ion-color-echojs);
-    --color-checked: var(--ion-color-echojs);
-    --ion-color-primary: var(--ion-color-echojs);
-}
-
-.reddit {
-    --indicator-color-checked: var(--ion-color-reddit);
-    --color-checked: var(--ion-color-reddit);
-    --ion-color-primary: var(--ion-color-reddit);
-}
-
-.medium {
-    --indicator-color-checked: var(--ion-color-medium);
-    --color-checked: var(--ion-color-medium);
-    --ion-color-primary: var(--ion-color-medium);
-}
-
-.producthunt {
-    --indicator-color-checked: var(--ion-color-producthunt);
-    --color-checked: var(--ion-color-producthunt);
-    --ion-color-primary: var(--ion-color-producthunt);
-}
-
-.redditprogramming {
-    --indicator-color-checked: var(--ion-color-redditprogramming);
-    --color-checked: var(--ion-color-redditprogramming);
-    --ion-color-primary: var(--ion-color-redditprogramming);
-}
-
-.datatau {
-    --indicator-color-checked: var(--ion-color-datatau);
-    --color-checked: var(--ion-color-datatau);
-    --ion-color-primary: var(--ion-color-datatau);
-}
-
-.growthhackers {
-    --indicator-color-checked: var(--ion-color-growthhackers);
-    --color-checked: var(--ion-color-growthhackers);
-    --ion-color-primary: var(--ion-color-growthhackers);
-}
-
-.stackoverflow {
-    --indicator-color-checked: var(--ion-color-stackoverflow);
-    --color-checked: var(--ion-color-stackoverflow);
-    --ion-color-primary: var(--ion-color-stackoverflow);
+  color: var(--ion-color-theme-toggle);
 }
 
 .p-0 {
-    padding: 0;
+  padding: 0;
 }
 
 .favicon {
-    padding: .7em 1.4em .7em 0;
-    margin: 0;
+  padding: 0.7em 1.4em 0.7em 0;
+  margin: 0;
+}
+
+.text-left {
+  text-align: left;
 }
 
 .item-text {
-    white-space: normal !important;
-    margin: 0;
+  white-space: normal !important;
+  margin: 0;
 }
 
 .item-text h2 {
-    font-weight: 500;
+  font-weight: 500;
 }
 
 .item-text p {
-    color: var(--ion-color-step-550) !important;
+  color: var(--ion-color-step-550) !important;
+}
+
+.item-footer {
+  text-align: left;
 }
 
 .item-footer a {
-    text-decoration: none;
-    margin-right: 0.5em;
-    font-weight: 600;
+  text-decoration: none;
+  margin-right: 0.5em;
+  font-weight: 600;
 }
 
 .item-footer ion-icon {
-    vertical-align: middle;
+  vertical-align: middle;
 }
 
 ion-icon.up-arrow {
-    font-size: 24px;
-    margin-left: -0.1em;
+  font-size: 24px;
+  margin-left: -0.1em;
 }
 
 ion-slide.cards {
-    display: block;
-    text-align: left;
-    height: 100%;
+  display: block;
+  text-align: left;
+  height: 100%;
+}
+
+.slide-content {
+  width: 100vw;
+  height: calc(100vh - 56px - 48px);
+}
+
+.swiper-slide img.card-img {
+  height: 30vh;
+  object-fit: cover;
+  width: 100%;
+}
+.sub-tag {
+  height: 1.6em;
+}
+
+.w-100 {
+  width: 100%;
+}
+.text-center {
+  text-align: center;
+}
+.block {
+  display: block;
+}
+
+ion-segment-button img {
+  max-width: 2em;
+  border-radius: 1em;
+  filter: grayscale(100%);
+}
+ion-segment-button:hover img,
+ion-segment-button.segment-button-checked img {
+  filter: grayscale(0);
+}
+
+.about ion-label p {
+  white-space: break-spaces;
+}
+
+p strong,
+blockquote strong {
+  color: #ef8769;
+}
+
+blockquote {
+  font-family: Georgia, serif;
+  font-size: 18px;
+  font-style: italic;
+  width: 100%;
+  margin: 0.25em 0;
+  margin-left: 0;
+  padding: 0.35em 40px;
+  line-height: 1.45;
+  position: relative;
+  opacity: 0.8;
+}
+
+blockquote:before {
+  display: block;
+  padding-left: 10px;
+  content: '\201C';
+  font-size: 80px;
+  position: absolute;
+  left: 0;
+  top: -20px;
+  color: #999999;
+}
+.theme-toggle::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  content: '☀️';
+  color: white;
+  font-size: 24px;
+  z-index: 1;
+}
+.theme-toggle::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  content: '☪';
+  color: white;
+  font-size: 24px;
+  z-index: 1;
+}
+
+.inline-button {
+  --padding-end: 0;
+  --padding-start: 0;
+  font-size: 18px;
+  text-transform: none;
+  margin: 0;
+  margin-top: -0.4em;
+  text-decoration: underline 2px;
+}
+
+.ios .inline-button {
+  margin-top: -0.7em;
 }

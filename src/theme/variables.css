@@ -76,19 +76,6 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-light-shade: #d7d8da;
   --ion-color-light-tint: #f5f6f9;
 
-  /** sources **/
-  --ion-color-hackernews: #ff4000;
-  --ion-color-github: #333;
-  --ion-color-devto: #4e57ef;
-  --ion-color-echojs: #af1d1d;
-  --ion-color-reddit: #ff4500;
-  --ion-color-medium: #00ab6c;
-  --ion-color-producthunt: #da552e;
-  --ion-color-datatau: #03b4b4;
-  --ion-color-redditprogramming: #1c83d0;
-  --ion-color-growthhackers: #12ac8e;
-  --ion-color-stackoverflow: #EC7C23;
-
   --ion-color-theme-toggle: var(--ion-color-dark);
 }
 

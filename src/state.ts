@@ -1,29 +1,24 @@
 import { createGlobalState } from 'react-hooks-global-state'
-import { Plugins } from '@capacitor/core'
 
-import sources from './sources'
-const { path } = sources[0]
-
-const getPersistedState = (key: string) =>
-  JSON.parse(window.localStorage[key] || '[]')
 const initialState = {
-  segment: path,
   loading: false,
-  theme: window.localStorage['theme'] || 'dark',
-  hackernews: getPersistedState('hackernews'),
-  github: getPersistedState('github'),
-  echojs: getPersistedState('echojs'),
-  devto: getPersistedState('devto'),
-  redditprogramming: getPersistedState('redditprogramming'),
-  datatau: getPersistedState('datatau'),
-  medium: getPersistedState('medium'),
-  reddit: getPersistedState('reddit'),
-  growthhackers: getPersistedState('growthhackers'),
-  producthunt: getPersistedState('producthunt'),
-  stackoverflow: getPersistedState('stackoverflow'),
-}
+  theme: 'dark',
+  feeds: [],
+  tags: [],
+  selectedFeeds: {},
+  feedOrder: [],
+  ...Object.entries(localStorage).reduce<{ [key: string]: any }>((acc, [key, value]) => {
+    try {
+      acc[key] = JSON.parse(value)
+    } catch {
+      acc[key] = value
+    }
 
-const { setGlobalState, useGlobalState } = createGlobalState(initialState)
+    return acc
+  }, {}),
+} as { [key: string]: any }
+
+export const { setGlobalState, useGlobalState } = createGlobalState(initialState)
 
 export const setLoading = (isLoading: boolean) => {
   setGlobalState('loading', isLoading)
@@ -38,16 +33,12 @@ export const toggleTheme = () => {
   window.localStorage['theme'] = theme
 }
 
-export const setState = async (key: any, value: Array<object | null>) => {
+export const setGlobalStatePersistent = (key: string, value: any) => {
   setGlobalState(key, value)
-  window.localStorage[key] = JSON.stringify(value)
-  await Plugins.Browser.prefetch({
-    urls: value.map((x: any) => x.source.targetUrl),
-  })
-}
 
-export const setSegment = (value: string) => {
-  setGlobalState('segment', value)
+  try {
+    window.localStorage[key] = JSON.stringify(value)
+  } catch {
+    window.localStorage[key] = value
+  }
 }
-
-export { useGlobalState }

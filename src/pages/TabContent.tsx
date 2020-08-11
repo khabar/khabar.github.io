@@ -21,7 +21,6 @@ import { caretUp, chatbubble, contrast } from 'ionicons/icons'
 
 import { useGlobalState, toggleTheme } from '../state'
 import timeAgo from '../utils/timeAgo'
-import fetchData from '../utils/fetchData'
 
 type Props = {
   path: any
@@ -33,7 +32,7 @@ const TabContent = ({ path, title }: Props) => {
   const [loading] = useGlobalState('loading')
   type Entry = typeof data[0]
   const doRefresh = async (e: any) => {
-    await fetchData(path)
+    // await fetchData(path)
     e.detail.complete()
   }
 
