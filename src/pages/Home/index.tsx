@@ -30,15 +30,14 @@ import {
   reorderThreeOutline,
   reorderTwoSharp,
 } from 'ionicons/icons'
+import { isPlatform } from '@ionic/core'
 
 import { useGlobalState, toggleTheme, setGlobalStatePersistent } from '../../state'
-
 import logoSvg from '../../icons/logo.svg'
 import Slides from './Slides'
 import About from '../../components/About'
 import useIsMounted from '../../utils/useIsMounted'
 
-const isWeb = document.URL.startsWith('http')
 const Home: React.FC<RouteComponentProps> = ({ history }) => {
   const isMounted = useIsMounted()
   const [theme] = useGlobalState('theme')
@@ -101,8 +100,6 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
               <IonItem detail={false}>
                 <IonLabel>Theme</IonLabel>
                 <IonToggle
-                  className="theme-toggle"
-                  mode="ios"
                   checked={theme === 'light'}
                   color={theme === 'dark' ? 'light' : 'dark'}
                   onIonChange={handleThemeToggle}
@@ -128,7 +125,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
         </IonToolbar>
       </IonHeader>
       <Slides index={feedOrder.indexOf(currentFeedId)} onIndexChange={handleIndexChange} />
-      {isWeb && (
+      {isPlatform('desktop') && (
         <>
           <IonFab vertical="center" horizontal="start" slot="fixed">
             <IonFabButton size="small" translucent={true} onClick={handleNavigationFAB(-1)}>

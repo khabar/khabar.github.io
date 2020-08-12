@@ -8,10 +8,6 @@ ion-toolbar ion-spinner {
   align-items: center;
 }
 
-.theme-toggle {
-  color: var(--ion-color-theme-toggle);
-}
-
 .p-0 {
   padding: 0;
 }
@@ -128,24 +124,6 @@ blockquote:before {
   left: 0;
   top: -20px;
   color: #999999;
-}
-.theme-toggle::before {
-  position: absolute;
-  top: 0;
-  left: 0;
-  content: '☀️';
-  color: white;
-  font-size: 24px;
-  z-index: 1;
-}
-.theme-toggle::after {
-  position: absolute;
-  top: 0;
-  right: 0;
-  content: '☪';
-  color: white;
-  font-size: 24px;
-  z-index: 1;
 }
 
 .inline-button {
