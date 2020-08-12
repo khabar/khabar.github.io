@@ -17,9 +17,8 @@ const fetchArticles = async (feedId: string) =>
 const Slides: React.FC<{ index: number; onIndexChange: (i: number) => void }> = ({ index = 0, onIndexChange }) => {
   const [selectedFeeds] = useGlobalState('selectedFeeds')
   const [feedOrder] = useGlobalState('feedOrder')
-  const [lastFetchedFeedId, setLastFetchedFeedId] = useState('')
 
-  const [loading, setLoading] = useState(false)
+  const [loadingFeedId, setLoadingFeedId] = useState('')
   const [currentFeedId, setCurrentFeedId] = useState<string>()
 
   const slidesRef = useRef<HTMLIonSlidesElement>(null)
@@ -27,15 +26,14 @@ const Slides: React.FC<{ index: number; onIndexChange: (i: number) => void }> = 
   const setSelectedFeeds = (values: { [key: string]: IFeed }) => setGlobalStatePersistent('selectedFeeds', values)
 
   const fetchAndSaveFeedData = useCallback(
-    async (feedId: string, loadingStatus = true) => {
-      setLoading(loadingStatus)
+    async (feedId: string, setFeedId = true) => {
+      setLoadingFeedId(setFeedId ? feedId : '')
       const selectedFeedsClone = cloneDeep(selectedFeeds)
       const data = await fetchArticles(feedId)
       selectedFeedsClone[feedId].data = data
       selectedFeedsClone[feedId].updatedAt = Date.now()
       setSelectedFeeds(selectedFeedsClone)
-      setLastFetchedFeedId(feedId)
-      setLoading(false)
+      setLoadingFeedId('')
     },
     [selectedFeeds],
   )
@@ -60,10 +58,7 @@ const Slides: React.FC<{ index: number; onIndexChange: (i: number) => void }> = 
 
   const handleSlideChange = async () => {
     const slideIndex = (await slidesRef.current?.getActiveIndex()) || 0
-    // const feedId = feedOrder[slideIndex]
-    // setCurrentFeedId(feedId)
     onIndexChange(slideIndex)
-    // await hydrateFeedData(feedId)
   }
 
   useEffect(() => {
@@ -74,7 +69,7 @@ const Slides: React.FC<{ index: number; onIndexChange: (i: number) => void }> = 
         slidesRef.current
           ?.slideTo(index)
           .then(() => hydrateFeedDataIfNeeded(feedId))
-          .then(() => console.log('Slide index changed to: ' + index))
+          .then(() => console.log('Slide index: ' + index))
           .catch(console.error)
       }
     }
@@ -91,13 +86,7 @@ const Slides: React.FC<{ index: number; onIndexChange: (i: number) => void }> = 
   return (
     <IonSlides ref={slidesRef} onIonSlideWillChange={handleSlideChange}>
       {(feedOrder as string[]).map((id: string, i) => (
-        <Slide
-          key={id + i}
-          feed={selectedFeeds[id]}
-          loading={loading}
-          updated={lastFetchedFeedId === id}
-          doRefresh={doRefresh}
-        />
+        <Slide key={id + i} data={selectedFeeds[id].data} loading={loadingFeedId === id} doRefresh={doRefresh} />
       ))}
     </IonSlides>
   )

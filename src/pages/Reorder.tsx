@@ -71,10 +71,10 @@ const Reorder: React.FC<RouteComponentProps> = ({ history }) => {
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent>
+      <IonContent className="feed-content">
         <IonReorderGroup disabled={false} onIonItemReorder={handleReorder}>
           {(feedOrder as string[]).map((id: string) => (
-            <IonItem key={id}>
+            <IonItem detail={false} key={id}>
               <IonAvatar slot="start">
                 <img
                   style={{

@@ -53,7 +53,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
   const handleSegmentChange = (e: any) => setCurrentFeedId(e.detail.value)
   const handleNavigationFAB = (i: number) => () => {
     const newIndex = feedOrder.indexOf(currentFeedId) + i
-    if (newIndex >= 0) setCurrentFeedId(feedOrder[newIndex])
+    if (newIndex >= 0 && newIndex < feedOrder.length) setCurrentFeedId(feedOrder[newIndex])
   }
 
   const handleMenuDismiss = () => isMounted.current && setShowPopover({ open: false, event: undefined })
@@ -127,13 +127,18 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
       <Slides index={feedOrder.indexOf(currentFeedId)} onIndexChange={handleIndexChange} />
       {isPlatform('desktop') && (
         <>
-          <IonFab vertical="center" horizontal="start" slot="fixed">
+          <IonFab vertical="center" horizontal="start" slot="fixed" hidden={feedOrder.indexOf(currentFeedId) === 0}>
             <IonFabButton size="small" translucent={true} onClick={handleNavigationFAB(-1)}>
               <IonIcon icon={chevronBack} />
             </IonFabButton>
           </IonFab>
 
-          <IonFab vertical="center" horizontal="end" slot="fixed">
+          <IonFab
+            vertical="center"
+            horizontal="end"
+            slot="fixed"
+            hidden={feedOrder.indexOf(currentFeedId) === feedOrder.length - 1}
+          >
             <IonFabButton size="small" translucent={true} onClick={handleNavigationFAB(1)}>
               <IonIcon icon={chevronForward} />
             </IonFabButton>

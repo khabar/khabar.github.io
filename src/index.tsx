@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Plugins } from '@capacitor/core'
+import { isPlatform } from '@ionic/core'
 
 import App from './App'
 import * as serviceWorker from './serviceWorker'
@@ -13,7 +14,7 @@ Plugins.App.addListener('backButton', async () => {
     title: 'Exit',
     message: 'Are you sure you want to exit?',
     cancelButtonTitle: 'No',
-    okButtonTitle: 'Yes'
+    okButtonTitle: 'Yes',
   })
 
   if (value) Plugins.App.exitApp()
@@ -24,4 +25,4 @@ ReactDOM.render(<App />, document.getElementById('root'))
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: http://bit.ly/CRA-PWA
-serviceWorker.register()
+if (!isPlatform('capacitor')) serviceWorker.register()

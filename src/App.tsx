@@ -1,6 +1,6 @@
 import React from 'react'
 import { IonApp, IonPage, IonRouterOutlet } from '@ionic/react'
-import { Route } from 'react-router-dom'
+import { Route, Redirect } from 'react-router-dom'
 import { IonReactRouter } from '@ionic/react-router'
 
 import Home from './pages/Home'
@@ -36,6 +36,7 @@ const App: React.FunctionComponent = () => (
           <Route path="/reorder" component={Reorder} exact />
           <Route path="/" component={Home} exact />
           <Route component={Home} />
+          <Redirect to="/" />
         </IonRouterOutlet>
       </IonPage>
     </IonReactRouter>

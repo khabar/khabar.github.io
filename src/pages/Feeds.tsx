@@ -114,6 +114,17 @@ const Feeds: React.FC<RouteComponentProps> = ({ history }) => {
     }
 
     setGlobalStatePersistent('selectedFeeds', selectedFeedsClone)
+    if (selectedFeedsClone[id]) {
+      fetch(`https://api.usepanda.com/v4/articles?feeds=${id}&limit=30&page=1&sort=latest`)
+        .then((res) => res.json())
+        .then((data) => {
+          const selectedFeedsCloneData = cloneDeep(selectedFeedsClone)
+          selectedFeedsCloneData[id].data = data
+          selectedFeedsCloneData[id].updatedAt = Date.now()
+          setGlobalStatePersistent('selectedFeeds', selectedFeedsCloneData)
+        })
+        .catch(console.error)
+    }
   }
 
   const handleSearch = (e: CustomEvent<SearchbarChangeEventDetail | void>) => {
@@ -152,12 +163,14 @@ const Feeds: React.FC<RouteComponentProps> = ({ history }) => {
             <IonIcon title="Khabar" slot="icon-only" src={logoSvg} />
           </IonButtons>
           <IonTitle>Khabar</IonTitle>
-          <IonButtons onClick={() => history.replace('/')} slot="end">
-            <IonButton>Done</IonButton>
+          <IonButtons slot="end">
+            <IonButton disabled={Object.keys(selectedFeeds).length === 0} onClick={() => history.replace('/')}>
+              Done
+            </IonButton>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent ref={contentRef}>
+      <IonContent className="feed-content" ref={contentRef}>
         <IonSearchbar
           value={searchText}
           placeholder="Type website name or topic"
@@ -199,7 +212,7 @@ const Feeds: React.FC<RouteComponentProps> = ({ history }) => {
           </div>
         )}
         {filteredFeeds.map((x) => (
-          <IonItem key={x.id} className="w-100">
+          <IonItem detail={false} key={x.id} className="w-100">
             <IonAvatar slot="start">
               <img alt={x.title} src={x.icon} />
             </IonAvatar>

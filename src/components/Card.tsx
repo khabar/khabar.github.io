@@ -29,7 +29,7 @@ const Card: React.FC<{ article: IArticle }> = ({ article }) => {
         </>
       ) : (
         <IonCardHeader className="p-0">
-          <IonItem button onClick={openUrl(article.source.targetUrl)} lines="none">
+          <IonItem detail={false} button onClick={openUrl(article.source.targetUrl)} lines="none">
             <IonAvatar className="favicon" slot="start">
               <img
                 alt={article.source.name}
