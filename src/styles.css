@@ -53,18 +53,13 @@ ion-icon.up-arrow {
   margin-left: -0.1em;
 }
 
-ion-slide.cards {
-  display: block;
-  text-align: left;
-  height: 100%;
-}
-
-.slide-content {
+.article-content {
   width: 100vw;
+  overflow-y: auto;
   height: calc(100vh - 56px - 48px);
 }
 
-.iso .slide-content {
+.iso .article-content {
   height: calc(100vh - 44px - 32px);
 }
 
@@ -76,7 +71,7 @@ ion-slide.cards {
   height: calc(100vh - 44px);
 }
 
-.swiper-slide img.card-img {
+.card-img {
   height: 30vh;
   object-fit: cover;
   width: 100%;
@@ -90,9 +85,6 @@ ion-slide.cards {
 }
 .text-center {
   text-align: center;
-}
-.block {
-  display: block;
 }
 
 ion-segment-button img {

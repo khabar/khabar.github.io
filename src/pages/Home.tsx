@@ -1,6 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { RouteComponentProps } from 'react-router'
 import {
+  IonContent,
+  IonRefresher,
+  IonRefresherContent,
+  IonSpinner,
   IonButton,
   IonButtons,
   IonItem,
@@ -30,13 +34,17 @@ import {
   reorderThreeOutline,
   reorderTwoSharp,
 } from 'ionicons/icons'
-import { isPlatform } from '@ionic/core'
+import { isPlatform, RefresherEventDetail } from '@ionic/core'
+import cloneDeep from 'lodash/cloneDeep'
 
-import { useGlobalState, toggleTheme, setGlobalStatePersistent } from '../../state'
-import logoSvg from '../../icons/logo.svg'
-import Slides from './Slides'
-import About from '../../components/About'
-import useIsMounted from '../../utils/useIsMounted'
+import { useGlobalState, toggleTheme, setGlobalStatePersistent } from '../state'
+import logoSvg from '../icons/logo.svg'
+import About from '../components/About'
+import Card from '../components/Card'
+import useIsMounted from '../utils/useIsMounted'
+
+const fetchArticles = async (feedId: string) =>
+  (await fetch(`https://api.usepanda.com/v4/articles?feeds=${feedId}&limit=30&page=1&sort=latest`)).json()
 
 const Home: React.FC<RouteComponentProps> = ({ history }) => {
   const isMounted = useIsMounted()
@@ -44,11 +52,37 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
   const [selectedFeeds] = useGlobalState('selectedFeeds')
   const [feedOrder] = useGlobalState('feedOrder')
 
-  const [currentFeedId, setCurrentFeedId] = useState<string>()
+  const [loading, setLoading] = useState(false)
+  const [currentFeedId, setCurrentFeedId] = useState<string>('')
   const [showPopover, setShowPopover] = useState<IShowPopover>({ open: false, event: undefined })
   const [showAboutModal, setShowAboutModal] = useState(false)
 
   const setFeedOrder = (values: string[]) => setGlobalStatePersistent('feedOrder', values)
+  const setSelectedFeeds = (values: { [key: string]: IFeed }) => setGlobalStatePersistent('selectedFeeds', values)
+
+  const fetchAndSaveFeedData = useCallback(
+    async (feedId: string, showLoading = true) => {
+      setLoading(showLoading)
+      const selectedFeedsClone = cloneDeep(selectedFeeds)
+      const data = await fetchArticles(feedId)
+      selectedFeedsClone[feedId].data = data
+      selectedFeedsClone[feedId].updatedAt = Date.now()
+      setSelectedFeeds(selectedFeedsClone)
+      setLoading(false)
+    },
+    [selectedFeeds],
+  )
+
+  const hydrateFeedDataIfNeeded = useCallback(
+    async (feedId: string) => {
+      const feed = selectedFeeds[feedId]
+      if (feed && Date.now() - (+feed.updatedAt || 0) > 60 * 60 * 1000) {
+        console.log('Fetching feed data for: ' + feed.title)
+        await fetchAndSaveFeedData(feedId)
+      }
+    },
+    [selectedFeeds, fetchAndSaveFeedData],
+  )
 
   const handleSegmentChange = (e: any) => setCurrentFeedId(e.detail.value)
   const handleNavigationFAB = (i: number) => () => {
@@ -68,23 +102,41 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
     setShowAboutModal(true)
   }
 
-  const handleIndexChange = (i: number) => setCurrentFeedId(feedOrder[i])
+  const handeHideAboutModal = () => setShowAboutModal(false)
+
+  const doRefresh = async (e: CustomEvent<RefresherEventDetail>) => {
+    if (currentFeedId) {
+      await fetchAndSaveFeedData(currentFeedId, false)
+    }
+    e.detail.complete()
+  }
 
   const handleMenuBtn = (path: string) => () => {
     handleMenuDismiss()
     history.replace(path)
   }
 
+  const handleShowMenuPopover = (e: React.MouseEvent<HTMLIonButtonElement, MouseEvent>) =>
+    setShowPopover({ open: true, event: e.nativeEvent })
+
   useEffect(() => {
     if (!feedOrder.length) {
-      history.replace('/feeds')
-    } else if (!feedOrder.length) {
+      return history.replace('/feeds')
+    }
+
+    if (!feedOrder.length) {
       const defaultFeedOrder = Object.keys(selectedFeeds)
       setFeedOrder(defaultFeedOrder)
-    } else if (!currentFeedId) {
-      setCurrentFeedId(feedOrder[0])
     }
-  }, [feedOrder, selectedFeeds, history, currentFeedId])
+
+    if (!currentFeedId) {
+      const firstFeedId = feedOrder[0]
+      setCurrentFeedId(firstFeedId)
+      hydrateFeedDataIfNeeded(firstFeedId).then(console.log).catch(console.error)
+    } else {
+      hydrateFeedDataIfNeeded(currentFeedId).then(console.log).catch(console.error)
+    }
+  }, [feedOrder, selectedFeeds, history, currentFeedId, hydrateFeedDataIfNeeded])
 
   return (
     <IonApp>
@@ -118,17 +170,24 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
                 <IonIcon title="Reorder" icon={information} slot="end" />
               </IonItem>
             </IonPopover>
-            <IonButton onClick={(e) => setShowPopover({ open: true, event: e.nativeEvent })} slot="end">
+            <IonButton onClick={handleShowMenuPopover} slot="end">
               <IonIcon slot="icon-only" ios={ellipsisHorizontal} md={ellipsisVertical} />
             </IonButton>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <Slides index={feedOrder.indexOf(currentFeedId)} onIndexChange={handleIndexChange} />
+      <IonContent className="article-content">
+        <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
+          <IonRefresherContent refreshingSpinner="dots" />
+        </IonRefresher>
+        {(!currentFeedId || loading) && <IonSpinner className="w-100" name="dots" duration={30} />}
+        {currentFeedId &&
+          selectedFeeds[currentFeedId].data?.map((article: IArticle) => <Card key={article._id} article={article} />)}
+      </IonContent>
       {isPlatform('desktop') && (
         <>
           <IonFab vertical="center" horizontal="start" slot="fixed" hidden={feedOrder.indexOf(currentFeedId) === 0}>
-            <IonFabButton size="small" translucent={true} onClick={handleNavigationFAB(-1)}>
+            <IonFabButton translucent={true} onClick={handleNavigationFAB(-1)}>
               <IonIcon icon={chevronBack} />
             </IonFabButton>
           </IonFab>
@@ -139,7 +198,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
             slot="fixed"
             hidden={feedOrder.indexOf(currentFeedId) === feedOrder.length - 1}
           >
-            <IonFabButton size="small" translucent={true} onClick={handleNavigationFAB(1)}>
+            <IonFabButton translucent={true} onClick={handleNavigationFAB(1)}>
               <IonIcon icon={chevronForward} />
             </IonFabButton>
           </IonFab>
@@ -151,7 +210,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
           {(feedOrder as string[]).map((id, i) => {
             const feed = selectedFeeds[id]
             return (
-              <IonSegmentButton key={id} value={id} data-index={'' + i} title={feed.title}>
+              <IonSegmentButton key={'segmentBtn' + id} value={id} data-index={'' + i} title={feed.title}>
                 <img alt={feed.title} src={feed.icon} />
               </IonSegmentButton>
             )
@@ -159,7 +218,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
         </IonSegment>
       </IonFooter>
 
-      <IonModal isOpen={showAboutModal} swipeToClose={true} onDidDismiss={() => setShowAboutModal(false)}>
+      <IonModal isOpen={showAboutModal} swipeToClose={true} onDidDismiss={handeHideAboutModal}>
         <IonHeader>
           <IonToolbar>
             <IonButtons slot="start">
@@ -169,7 +228,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
             <IonTitle>About</IonTitle>
 
             <IonButtons slot="end">
-              <IonButton onClick={() => setShowAboutModal(false)}>Close</IonButton>
+              <IonButton onClick={handeHideAboutModal}>Close</IonButton>
             </IonButtons>
           </IonToolbar>
         </IonHeader>
