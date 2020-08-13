@@ -10,12 +10,6 @@
 // To learn more about the benefits of this model and instructions on how to
 // opt-in, read http://bit.ly/CRA-PWA
 
-/// <reference lib="esnext" />
-/// <reference lib="webworker" />
-
-export default null
-declare var self: ServiceWorkerGlobalScope
-
 const isLocalhost = Boolean(
   window.location.hostname === 'localhost' ||
     // [::1] is the IPv6 localhost address.
@@ -23,16 +17,6 @@ const isLocalhost = Boolean(
     // 127.0.0.1/8 is considered localhost for IPv4.
     window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/),
 )
-
-const externalAssets = [
-  'storage.googleapis.com',
-  'usepanda.com/img',
-  'www.google.com/s2/favicons',
-  'url2png.producthunt.com',
-  'images.unsplash.com',
-  'inspgr.id/app/uploads',
-  'wp-content/uploads',
-]
 
 type Config = {
   onSuccess?: (registration: ServiceWorkerRegistration) => void
@@ -62,8 +46,8 @@ export function register(config?: Config) {
         navigator.serviceWorker.ready
           .then(() => {
             console.log(
-              `This web app is being served cache-first by a service worker.
-            To learn more, visit http://bit.ly/CRA-PWA`,
+              'This web app is being served cache-first by a service ' +
+                'worker. To learn more, visit http://bit.ly/CRA-PWA',
             )
           })
           .catch(console.error)
@@ -81,17 +65,9 @@ function registerValidSW(swUrl: string, config?: Config) {
     .then((registration) => {
       registration.onupdatefound = () => {
         const installingWorker = registration.installing
-        if (installingWorker == null) {
+        if (installingWorker === null) {
           return
         }
-
-        // this is the service worker which intercepts all http requests
-        self.addEventListener('fetch', async (event) => {
-          if (new RegExp(externalAssets.join('|'), 'gi').test(event.request.url)) {
-            event.respondWith(caches.match(event.request).then((response) => response || fetch(event.request)))
-          }
-        })
-
         installingWorker.onstatechange = () => {
           if (installingWorker.state === 'installed') {
             if (navigator.serviceWorker.controller) {
@@ -133,13 +109,14 @@ function checkValidServiceWorker(swUrl: string, config?: Config) {
     .then((response) => {
       // Ensure service worker exists, and that we really are getting a JS file.
       const contentType = response.headers.get('content-type')
-      if (response.status === 404 || (contentType != null && contentType.indexOf('javascript') === -1)) {
+      if (response.status === 404 || (contentType !== null && contentType.indexOf('javascript') === -1)) {
         // No service worker found. Probably a different app. Reload the page.
-        navigator.serviceWorker.ready.then((registration) => {
-          registration.unregister().then(() => {
+        navigator.serviceWorker.ready
+          .then((registration) => registration.unregister())
+          .then(() => {
             window.location.reload()
           })
-        })
+          .catch(console.error)
       } else {
         // Service worker found. Proceed as normal.
         registerValidSW(swUrl, config)
@@ -152,8 +129,6 @@ function checkValidServiceWorker(swUrl: string, config?: Config) {
 
 export function unregister() {
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.ready.then((registration) => {
-      registration.unregister()
-    })
+    navigator.serviceWorker.ready.then((registration) => registration.unregister()).catch(console.error)
   }
 }
