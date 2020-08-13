@@ -13,7 +13,7 @@ const Card: React.FC<{ article: IArticle }> = ({ article }) => (
   <IonCard>
     {article.image.normal ? (
       <>
-        <button style={{ display: 'inherit', height: '30vh' }} onClick={openUrl(article.source.targetUrl)}>
+        <button className="img-btn" onClick={openUrl(article.source.targetUrl)}>
           <img
             className="card-img"
             alt={article.title || article.source.authorName || 'x'}

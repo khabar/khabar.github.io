@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useRef } from 'react'
 import { RouteComponentProps } from 'react-router'
 import {
   IonContent,
@@ -34,7 +34,7 @@ import {
   reorderThreeOutline,
   reorderTwoSharp,
 } from 'ionicons/icons'
-import { isPlatform, RefresherEventDetail } from '@ionic/core'
+import { isPlatform, RefresherEventDetail, ScrollDetail } from '@ionic/core'
 import cloneDeep from 'lodash/cloneDeep'
 
 import { useGlobalState, toggleTheme, setGlobalStatePersistent } from '../state'
@@ -56,6 +56,10 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
   const [currentFeedId, setCurrentFeedId] = useState<string>('')
   const [showPopover, setShowPopover] = useState<IShowPopover>({ open: false, event: undefined })
   const [showAboutModal, setShowAboutModal] = useState(false)
+  const [lastScrollTop, setLastScrollTop] = useState(0)
+
+  const toolbarRef = useRef<HTMLIonToolbarElement>(null)
+  const segmentRef = useRef<HTMLIonSegmentElement>(null)
 
   const setFeedOrder = (values: string[]) => setGlobalStatePersistent('feedOrder', values)
   const setSelectedFeeds = (values: { [key: string]: IFeed }) => setGlobalStatePersistent('selectedFeeds', values)
@@ -102,7 +106,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
     setShowAboutModal(true)
   }
 
-  const handeHideAboutModal = () => setShowAboutModal(false)
+  const handleHideAboutModal = () => setShowAboutModal(false)
 
   const doRefresh = async (e: CustomEvent<RefresherEventDetail>) => {
     if (currentFeedId) {
@@ -118,6 +122,17 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
 
   const handleShowMenuPopover = (e: React.MouseEvent<HTMLIonButtonElement, MouseEvent>) =>
     setShowPopover({ open: true, event: e.nativeEvent })
+
+  const handleContentScroll = ({ detail }: CustomEvent<ScrollDetail>) => {
+    if (detail.scrollTop > lastScrollTop && lastScrollTop > 200) {
+      toolbarRef.current?.classList.add('hide-header')
+      segmentRef.current?.classList.add('hide-footer')
+    } else {
+      toolbarRef.current?.classList.remove('hide-header')
+      segmentRef.current?.classList.remove('hide-footer')
+    }
+    setLastScrollTop(detail.scrollTop <= 0 ? 0 : detail.scrollTop)
+  }
 
   useEffect(() => {
     if (!feedOrder.length) {
@@ -141,7 +156,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
   return (
     <IonApp>
       <IonHeader>
-        <IonToolbar>
+        <IonToolbar ref={toolbarRef} className="header">
           <IonButtons slot="start">
             <IonIcon title="Khabar" slot="icon-only" src={logoSvg} />
           </IonButtons>
@@ -176,7 +191,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="article-content">
+      <IonContent className="article-content" scrollEvents={true} onIonScroll={handleContentScroll}>
         <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
           <IonRefresherContent refreshingSpinner="dots" />
         </IonRefresher>
@@ -206,7 +221,13 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
       )}
 
       <IonFooter>
-        <IonSegment scrollable={true} value={currentFeedId} onIonChange={handleSegmentChange}>
+        <IonSegment
+          ref={segmentRef}
+          className="footer"
+          scrollable={true}
+          value={currentFeedId}
+          onIonChange={handleSegmentChange}
+        >
           {(feedOrder as string[]).map((id, i) => {
             const feed = selectedFeeds[id]
             return (
@@ -218,7 +239,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
         </IonSegment>
       </IonFooter>
 
-      <IonModal isOpen={showAboutModal} swipeToClose={true} onDidDismiss={handeHideAboutModal}>
+      <IonModal isOpen={showAboutModal} swipeToClose={true} onDidDismiss={handleHideAboutModal}>
         <IonHeader>
           <IonToolbar>
             <IonButtons slot="start">
@@ -228,7 +249,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
             <IonTitle>About</IonTitle>
 
             <IonButtons slot="end">
-              <IonButton onClick={handeHideAboutModal}>Close</IonButton>
+              <IonButton onClick={handleHideAboutModal}>Close</IonButton>
             </IonButtons>
           </IonToolbar>
         </IonHeader>

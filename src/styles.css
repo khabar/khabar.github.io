@@ -143,3 +143,28 @@ blockquote:before {
 .ios .inline-button {
   margin-top: -0.7em;
 }
+
+.img-btn {
+  display: inherit;
+  height: 30vh;
+}
+
+.header,
+.footer {
+  transition: margin 0.3s;
+}
+
+.hide-header {
+  margin-top: -56px;
+}
+.iso .hide-header {
+  margin-top: -48px;
+}
+
+.hide-footer {
+  margin-bottom: -44px;
+}
+
+.iso .hide-footer {
+  margin-bottom: -32px;
+}
