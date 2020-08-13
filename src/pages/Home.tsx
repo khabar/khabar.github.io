@@ -36,6 +36,7 @@ import {
 } from 'ionicons/icons'
 import { isPlatform, RefresherEventDetail, ScrollDetail } from '@ionic/core'
 import cloneDeep from 'lodash/cloneDeep'
+import { useSwipeable } from 'react-swipeable'
 
 import { useGlobalState, toggleTheme, setGlobalStatePersistent } from '../state'
 import logoSvg from '../icons/logo.svg'
@@ -89,7 +90,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
   )
 
   const handleSegmentChange = (e: any) => setCurrentFeedId(e.detail.value)
-  const handleNavigationFAB = (i: number) => () => {
+  const handleNavigation = (i: number) => () => {
     const newIndex = feedOrder.indexOf(currentFeedId) + i
     if (newIndex >= 0 && newIndex < feedOrder.length) setCurrentFeedId(feedOrder[newIndex])
   }
@@ -133,6 +134,8 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
     }
     setLastScrollTop(detail.scrollTop <= 0 ? 0 : detail.scrollTop)
   }
+
+  const swipeEvents = useSwipeable({ onSwipedLeft: handleNavigation(1), onSwipedRight: handleNavigation(-1) })
 
   useEffect(() => {
     if (!feedOrder.length) {
@@ -191,7 +194,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="article-content" scrollEvents={true} onIonScroll={handleContentScroll}>
+      <IonContent {...swipeEvents} className="article-content" scrollEvents={true} onIonScroll={handleContentScroll}>
         <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
           <IonRefresherContent refreshingSpinner="dots" />
         </IonRefresher>
@@ -202,7 +205,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
       {isPlatform('desktop') && (
         <>
           <IonFab vertical="center" horizontal="start" slot="fixed" hidden={feedOrder.indexOf(currentFeedId) === 0}>
-            <IonFabButton translucent={true} onClick={handleNavigationFAB(-1)}>
+            <IonFabButton translucent={true} onClick={handleNavigation(-1)}>
               <IonIcon icon={chevronBack} />
             </IonFabButton>
           </IonFab>
@@ -213,7 +216,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
             slot="fixed"
             hidden={feedOrder.indexOf(currentFeedId) === feedOrder.length - 1}
           >
-            <IonFabButton translucent={true} onClick={handleNavigationFAB(1)}>
+            <IonFabButton translucent={true} onClick={handleNavigation(1)}>
               <IonIcon icon={chevronForward} />
             </IonFabButton>
           </IonFab>
