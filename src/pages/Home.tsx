@@ -47,6 +47,8 @@ import useIsMounted from '../utils/useIsMounted'
 const fetchArticles = async (feedId: string) =>
   (await fetch(`https://api.usepanda.com/v4/articles?feeds=${feedId}&limit=30&page=1&sort=latest`)).json()
 
+const HIDE_FOOTER = 'hide-footer'
+
 const Home: React.FC<RouteComponentProps> = ({ history }) => {
   const isMounted = useIsMounted()
   const [theme] = useGlobalState('theme')
@@ -58,6 +60,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
   const [showPopover, setShowPopover] = useState<IShowPopover>({ open: false, event: undefined })
   const [showAboutModal, setShowAboutModal] = useState(false)
   const [lastScrollTop, setLastScrollTop] = useState(0)
+  const [isFooterHidden, setIsFooterHidden] = useState(false)
 
   const contentRef = useRef<HTMLIonContentElement>(null)
   const segmentRef = useRef<HTMLIonSegmentElement>(null)
@@ -126,10 +129,16 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
 
   const handleContentScroll = async () => {
     const scrollTop = (await contentRef.current?.getScrollElement())?.scrollTop || 0
-    if (scrollTop > lastScrollTop) {
-      segmentRef.current?.classList.add('hide-footer')
-    } else {
-      segmentRef.current?.classList.remove('hide-footer')
+    const scrollDiff = lastScrollTop - scrollTop
+
+    if (scrollDiff < 50) {
+      if (!isFooterHidden) {
+        segmentRef.current?.classList.add(HIDE_FOOTER)
+        setIsFooterHidden(true)
+      }
+    } else if (isFooterHidden) {
+      segmentRef.current?.classList.remove(HIDE_FOOTER)
+      setIsFooterHidden(false)
     }
 
     setLastScrollTop(scrollTop)
@@ -176,7 +185,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
                 />
               </IonItem>
               <IonItem detail={false} button={true} onClick={handleMenuBtn('/feeds')}>
-                <IonLabel>Feed</IonLabel>
+                <IonLabel>Feeds</IonLabel>
                 <IonIcon title="Feed" md={add} ios={addOutline} slot="end" />
               </IonItem>
               <IonItem detail={false} button={true} onClick={handleMenuBtn('/reorder')}>

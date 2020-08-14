@@ -162,7 +162,7 @@ const Feeds: React.FC<RouteComponentProps> = ({ history }) => {
           <IonButtons slot="start">
             <IonIcon title="Khabar" slot="icon-only" src={logoSvg} />
           </IonButtons>
-          <IonTitle>Khabar</IonTitle>
+          <IonTitle>Feeds</IonTitle>
           <IonButtons slot="end">
             <IonButton disabled={Object.keys(selectedFeeds).length === 0} onClick={() => history.replace('/')}>
               Done

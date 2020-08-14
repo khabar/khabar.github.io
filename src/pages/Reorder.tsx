@@ -76,14 +76,7 @@ const Reorder: React.FC<RouteComponentProps> = ({ history }) => {
           {(feedOrder as string[]).map((id: string) => (
             <IonItem detail={false} key={id}>
               <IonAvatar slot="start">
-                <img
-                  style={{
-                    height: '2em',
-                    borderRadius: '1em',
-                  }}
-                  alt={selectedFeeds[id].title}
-                  src={selectedFeeds[id].icon}
-                />
+                <img alt={selectedFeeds[id].title} src={selectedFeeds[id].icon} />
               </IonAvatar>
               <IonLabel className="ion-text-wrap">
                 <h3>{selectedFeeds[id].title}</h3>
