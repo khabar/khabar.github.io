@@ -23,7 +23,7 @@ const resources = [
     logo: logoGithub,
     url: 'github.com/khabar',
     title: 'Source Code',
-    description: 'The complete source of this application is available in GitGub.',
+    description: 'The complete source of this application is available in GitHub.',
   },
   {
     logo: 'https://usepanda.com/favicons/apple-touch-icon.png',
