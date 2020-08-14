@@ -34,7 +34,7 @@ import {
   reorderThreeOutline,
   reorderTwoSharp,
 } from 'ionicons/icons'
-import { isPlatform, RefresherEventDetail, ScrollDetail } from '@ionic/core'
+import { isPlatform, RefresherEventDetail } from '@ionic/core'
 import cloneDeep from 'lodash/cloneDeep'
 import { useSwipeable } from 'react-swipeable'
 
@@ -59,7 +59,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
   const [showAboutModal, setShowAboutModal] = useState(false)
   const [lastScrollTop, setLastScrollTop] = useState(0)
 
-  const toolbarRef = useRef<HTMLIonToolbarElement>(null)
+  const contentRef = useRef<HTMLIonContentElement>(null)
   const segmentRef = useRef<HTMLIonSegmentElement>(null)
 
   const setFeedOrder = (values: string[]) => setGlobalStatePersistent('feedOrder', values)
@@ -124,15 +124,15 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
   const handleShowMenuPopover = (e: React.MouseEvent<HTMLIonButtonElement, MouseEvent>) =>
     setShowPopover({ open: true, event: e.nativeEvent })
 
-  const handleContentScroll = ({ detail }: CustomEvent<ScrollDetail>) => {
-    if (detail.scrollTop > lastScrollTop && lastScrollTop > 200) {
-      toolbarRef.current?.classList.add('hide-header')
+  const handleContentScroll = async () => {
+    const scrollTop = (await contentRef.current?.getScrollElement())?.scrollTop || 0
+    if (scrollTop > lastScrollTop) {
       segmentRef.current?.classList.add('hide-footer')
     } else {
-      toolbarRef.current?.classList.remove('hide-header')
       segmentRef.current?.classList.remove('hide-footer')
     }
-    setLastScrollTop(detail.scrollTop <= 0 ? 0 : detail.scrollTop)
+
+    setLastScrollTop(scrollTop)
   }
 
   const swipeEvents = useSwipeable({ onSwipedLeft: handleNavigation(1), onSwipedRight: handleNavigation(-1) })
@@ -159,7 +159,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
   return (
     <IonApp>
       <IonHeader>
-        <IonToolbar ref={toolbarRef} className="header">
+        <IonToolbar>
           <IonButtons slot="start">
             <IonIcon title="Khabar" slot="icon-only" src={logoSvg} />
           </IonButtons>
@@ -194,7 +194,13 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent {...swipeEvents} className="article-content" scrollEvents={true} onIonScroll={handleContentScroll}>
+      <IonContent
+        {...swipeEvents}
+        ref={contentRef}
+        className="article-content"
+        scrollEvents={true}
+        onIonScrollEnd={handleContentScroll}
+      >
         <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
           <IonRefresherContent refreshingSpinner="dots" />
         </IonRefresher>
