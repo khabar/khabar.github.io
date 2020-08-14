@@ -1,6 +1,5 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Plugins } from '@capacitor/core'
 import { isPlatform } from '@ionic/core'
 
 import App from './App'
@@ -8,17 +7,6 @@ import * as serviceWorker from './serviceWorker'
 
 const theme = window.localStorage['theme'] || 'dark'
 document.body.classList.add(theme)
-
-Plugins.App.addListener('backButton', async () => {
-  const { value } = await Plugins.Modals.confirm({
-    title: 'Exit',
-    message: 'Are you sure you want to exit?',
-    cancelButtonTitle: 'No',
-    okButtonTitle: 'Yes',
-  })
-
-  if (value) Plugins.App.exitApp()
-})
 
 ReactDOM.render(<App />, document.getElementById('root'))
 

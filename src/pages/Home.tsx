@@ -22,6 +22,9 @@ import {
   IonApp,
   IonFab,
   IonFabButton,
+  createGesture,
+  Gesture,
+  IonToast,
 } from '@ionic/react'
 import {
   add,
@@ -33,27 +36,29 @@ import {
   chevronForward,
   reorderThreeOutline,
   reorderTwoSharp,
+  cloudOffline,
 } from 'ionicons/icons'
 import { isPlatform, RefresherEventDetail } from '@ionic/core'
 import cloneDeep from 'lodash/cloneDeep'
-import { useSwipeable } from 'react-swipeable'
 
 import { useGlobalState, toggleTheme, setGlobalStatePersistent } from '../state'
 import logoSvg from '../icons/logo.svg'
 import About from '../components/About'
 import Card from '../components/Card'
 import useIsMounted from '../utils/useIsMounted'
+import apiRequest from '../utils/apiRequest'
 
-const fetchArticles = async (feedId: string) =>
-  (await fetch(`https://api.usepanda.com/v4/articles?feeds=${feedId}&limit=30&page=1&sort=latest`)).json()
+const fetchArticles = async (feedId: string) => apiRequest(`/v4/articles?feeds=${feedId}&limit=30&page=1&sort=latest`)
 
 const HIDE_FOOTER = 'hide-footer'
+const windowWidth = window.innerWidth
 
 const Home: React.FC<RouteComponentProps> = ({ history }) => {
   const isMounted = useIsMounted()
   const [theme] = useGlobalState('theme')
   const [selectedFeeds] = useGlobalState('selectedFeeds')
   const [feedOrder] = useGlobalState('feedOrder')
+  const [isOffline] = useGlobalState('isOffline')
 
   const [loading, setLoading] = useState(false)
   const [currentFeedId, setCurrentFeedId] = useState<string>('')
@@ -61,6 +66,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
   const [showAboutModal, setShowAboutModal] = useState(false)
   const [lastScrollTop, setLastScrollTop] = useState(0)
   const [isFooterHidden, setIsFooterHidden] = useState(false)
+  const [error, setError] = useState('')
 
   const contentRef = useRef<HTMLIonContentElement>(null)
   const segmentRef = useRef<HTMLIonSegmentElement>(null)
@@ -71,12 +77,17 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
   const fetchAndSaveFeedData = useCallback(
     async (feedId: string, showLoading = true) => {
       setLoading(showLoading)
-      const selectedFeedsClone = cloneDeep(selectedFeeds)
-      const data = await fetchArticles(feedId)
-      selectedFeedsClone[feedId].data = data
-      selectedFeedsClone[feedId].updatedAt = Date.now()
-      setSelectedFeeds(selectedFeedsClone)
-      setLoading(false)
+      try {
+        const selectedFeedsClone = cloneDeep(selectedFeeds)
+        const data = await fetchArticles(feedId)
+        selectedFeedsClone[feedId].data = data
+        selectedFeedsClone[feedId].updatedAt = Date.now()
+        setSelectedFeeds(selectedFeedsClone)
+      } catch (e) {
+        setError(e.message)
+      } finally {
+        setLoading(false)
+      }
     },
     [selectedFeeds],
   )
@@ -93,10 +104,13 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
   )
 
   const handleSegmentChange = (e: any) => setCurrentFeedId(e.detail.value)
-  const handleNavigation = (i: number) => () => {
-    const newIndex = feedOrder.indexOf(currentFeedId) + i
-    if (newIndex >= 0 && newIndex < feedOrder.length) setCurrentFeedId(feedOrder[newIndex])
-  }
+  const handleNavigation = useCallback(
+    (i: number) => () => {
+      const newIndex = feedOrder.indexOf(currentFeedId) + i
+      if (newIndex >= 0 && newIndex < feedOrder.length) setCurrentFeedId(feedOrder[newIndex])
+    },
+    [currentFeedId, feedOrder],
+  )
 
   const handleMenuDismiss = () => isMounted.current && setShowPopover({ open: false, event: undefined })
 
@@ -144,9 +158,10 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
     setLastScrollTop(scrollTop)
   }
 
-  const swipeEvents = useSwipeable({ onSwipedLeft: handleNavigation(1), onSwipedRight: handleNavigation(-1) })
+  // const swipeEvents = useSwipeable({ onSwipedLeft: handleNavigation(1), onSwipedRight: handleNavigation(-1) })
 
   useEffect(() => {
+    let gesture: Gesture
     if (!feedOrder.length) {
       return history.replace('/feeds')
     }
@@ -163,7 +178,28 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
     } else {
       hydrateFeedDataIfNeeded(currentFeedId).then(console.log).catch(console.error)
     }
-  }, [feedOrder, selectedFeeds, history, currentFeedId, hydrateFeedDataIfNeeded])
+
+    if (contentRef.current) {
+      gesture = createGesture({
+        el: contentRef.current,
+        gestureName: 'swipe-gesture',
+        onMove: (ev) => {
+          if (ev.deltaX > windowWidth / 2) {
+            handleNavigation(-1)()
+          } else if (ev.deltaX < -windowWidth / 2) {
+            handleNavigation(1)()
+          }
+        },
+      })
+      gesture.enable()
+    }
+
+    return () => {
+      gesture?.destroy()
+    }
+  }, [feedOrder, selectedFeeds, history, currentFeedId, hydrateFeedDataIfNeeded, handleNavigation])
+
+  const data = (currentFeedId && selectedFeeds[currentFeedId].data) || []
 
   return (
     <IonApp>
@@ -175,6 +211,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
 
           <IonTitle>{currentFeedId ? selectedFeeds[currentFeedId].title : 'Khabar'}</IonTitle>
           <IonButtons slot="end">
+            {isOffline && <IonIcon title="Offline" icon={cloudOffline} />}
             <IonPopover isOpen={showPopover.open} event={showPopover.event} onDidDismiss={handleMenuDismiss}>
               <IonItem detail={false}>
                 <IonLabel>Theme</IonLabel>
@@ -204,7 +241,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
         </IonToolbar>
       </IonHeader>
       <IonContent
-        {...swipeEvents}
+        // {...swipeEvents}
         ref={contentRef}
         className="article-content"
         scrollEvents={true}
@@ -214,8 +251,26 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
           <IonRefresherContent refreshingSpinner="dots" />
         </IonRefresher>
         {(!currentFeedId || loading) && <IonSpinner className="w-100" name="dots" duration={30} />}
-        {currentFeedId &&
-          selectedFeeds[currentFeedId].data?.map((article: IArticle) => <Card key={article._id} article={article} />)}
+        {data.length
+          ? data.map((article: IArticle) => <Card key={article._id} article={article} />)
+          : [...new Array(12)].map((x, i) => <Card key={'card' + i} article={{} as IArticle} />)}
+        <IonToast
+          isOpen={error !== ''}
+          color="danger"
+          duration={15000}
+          onDidDismiss={() => setError('')}
+          message={error}
+          buttons={[
+            {
+              text: 'Retry',
+              handler: () => {
+                fetchAndSaveFeedData(currentFeedId)
+                  .then(() => console.log('Feeds fetched'))
+                  .catch(console.error)
+              },
+            },
+          ]}
+        />
       </IonContent>
       {isPlatform('desktop') && (
         <>

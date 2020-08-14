@@ -1,7 +1,7 @@
 import { createGlobalState } from 'react-hooks-global-state'
 
 const initialState = {
-  loading: false,
+  isOffline: false,
   theme: 'dark',
   feeds: [],
   tags: [],
@@ -19,10 +19,6 @@ const initialState = {
 } as { [key: string]: any }
 
 export const { setGlobalState, useGlobalState } = createGlobalState(initialState)
-
-export const setLoading = (isLoading: boolean) => {
-  setGlobalState('loading', isLoading)
-}
 
 export const toggleTheme = () => {
   let theme = window.localStorage['theme'] || 'dark'
@@ -42,3 +38,6 @@ export const setGlobalStatePersistent = (key: string, value: any) => {
     window.localStorage[key] = value
   }
 }
+
+window.addEventListener('online', () => setGlobalStatePersistent('isOffline', false))
+window.addEventListener('offline', () => setGlobalStatePersistent('isOffline', true))
