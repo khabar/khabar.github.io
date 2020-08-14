@@ -24,3 +24,8 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+resources/android/icon
+resources/android/splash
+resources/ios/icon
+resources/ios/splash

@@ -7,7 +7,10 @@
     "build": "react-scripts build && npx cap copy",
     "deploy:gh-pages": "gh-pages -d build -b master",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "resources:android": "npx cordova-res android --skip-config --copy",
+    "resources:ios": "npx cordova-res ios --skip-config --copy",
+    "resources": "npm run resources:android & npm run resources:android"
   },
   "dependencies": {
     "@capacitor/android": "^2.4.0",
