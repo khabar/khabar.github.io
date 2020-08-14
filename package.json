@@ -1,6 +1,6 @@
 {
   "name": "Khabar",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "private": true,
   "scripts": {
     "start": "BROWSER=none react-scripts start",
