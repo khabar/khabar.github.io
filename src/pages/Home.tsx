@@ -40,6 +40,7 @@ import {
 } from 'ionicons/icons'
 import { isPlatform, RefresherEventDetail } from '@ionic/core'
 import cloneDeep from 'lodash/cloneDeep'
+import { Plugins } from '@capacitor/core'
 
 import { useGlobalState, toggleTheme, setGlobalStatePersistent } from '../state'
 import logoSvg from '../icons/logo.svg'
@@ -135,7 +136,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
 
   const handleMenuBtn = (path: string) => () => {
     handleMenuDismiss()
-    history.replace(path)
+    history.push(path)
   }
 
   const handleShowMenuPopover = (e: React.MouseEvent<HTMLIonButtonElement, MouseEvent>) =>
@@ -158,12 +159,10 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
     setLastScrollTop(scrollTop)
   }
 
-  // const swipeEvents = useSwipeable({ onSwipedLeft: handleNavigation(1), onSwipedRight: handleNavigation(-1) })
-
   useEffect(() => {
     let gesture: Gesture
     if (!feedOrder.length) {
-      return history.replace('/feeds')
+      return history.push('/feeds')
     }
 
     if (!feedOrder.length) {
@@ -175,6 +174,14 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
       const firstFeedId = feedOrder[0]
       setCurrentFeedId(firstFeedId)
       hydrateFeedDataIfNeeded(firstFeedId).then(console.log).catch(console.error)
+
+      Plugins.App.addListener('backButton', () => {
+        if (showAboutModal) {
+          handleHideAboutModal()
+        } else {
+          Plugins.App.exitApp()
+        }
+      })
     } else {
       hydrateFeedDataIfNeeded(currentFeedId).then(console.log).catch(console.error)
     }
@@ -196,8 +203,9 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
 
     return () => {
       gesture?.destroy()
+      Plugins.App.removeAllListeners()
     }
-  }, [feedOrder, selectedFeeds, history, currentFeedId, hydrateFeedDataIfNeeded, handleNavigation])
+  }, [feedOrder, selectedFeeds, history, currentFeedId, hydrateFeedDataIfNeeded, handleNavigation, showAboutModal])
 
   const data = (currentFeedId && selectedFeeds[currentFeedId].data) || []
 
@@ -240,13 +248,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent
-        // {...swipeEvents}
-        ref={contentRef}
-        className="article-content"
-        scrollEvents={true}
-        onIonScrollEnd={handleContentScroll}
-      >
+      <IonContent ref={contentRef} className="article-content" scrollEvents={true} onIonScrollEnd={handleContentScroll}>
         <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
           <IonRefresherContent refreshingSpinner="dots" />
         </IonRefresher>
