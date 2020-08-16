@@ -30,7 +30,7 @@ const resources = [
     url: 'usepanda.com',
     title: 'Data Source (API)',
     description:
-      'Panda is freely available news reader when you can discover the best tools, resources and inspiration in the world of design and tech.',
+      'Panda is freely available news reader where you can discover the best tools, resources and inspiration in the world of design and tech.',
   },
   {
     logo: 'https://ionicframework.com/img/meta/favicon-192x192.png',
@@ -46,15 +46,26 @@ const About = () => (
     <Logo style={{ height: '10vh', marginTop: '5vh' }} />
     <div>
       <blockquote>
-        <strong>Khabar</strong> is a free and open-source cross-platform application for staying informed about the best
-        tools and techniques in the world of design and technology developed by{' '}
+        <strong>Khabar</strong> is a free and open-source cross-platform mobile-app/PWA for staying informed about the
+        best tools and techniques in the world of design and technology, powered by <b>Panda</b> and developed by{' '}
         <IonButton className="inline-button" fill="clear" onClick={openUrl('https://himalay.com.np')}>
           Himalay Sunuwar
         </IonButton>
         .
       </blockquote>
     </div>
-    <IonList style={{ marginTop: '5vh' }}>
+    <a
+      href="https://play.google.com/store/apps/details?id=np.com.himalay.khabar"
+      target="_system"
+      rel="noopener noreferrer"
+    >
+      <img
+        style={{ maxHeight: '80px' }}
+        alt="Get it on Google Play"
+        src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
+      />
+    </a>
+    <IonList>
       {resources.map(({ logo, url, title, description }) => (
         <IonItem key={title} detail={false} button={true} onClick={openUrl(`https://${url}`)}>
           <IonAvatar slot="start">{logo ? <img alt={title} src={logo} /> : <Logo />}</IonAvatar>
