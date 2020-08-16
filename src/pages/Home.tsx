@@ -19,7 +19,7 @@ import {
   IonPopover,
   IonToggle,
   IonModal,
-  IonApp,
+  IonPage,
   IonFab,
   IonFabButton,
   createGesture,
@@ -40,6 +40,7 @@ import {
 } from 'ionicons/icons'
 import { isPlatform, RefresherEventDetail } from '@ionic/core'
 import cloneDeep from 'lodash/cloneDeep'
+import { Plugins } from '@capacitor/core'
 
 import { useGlobalState, toggleTheme, setGlobalStatePersistent } from '../state'
 import logoSvg from '../icons/logo.svg'
@@ -95,7 +96,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
   const hydrateFeedDataIfNeeded = useCallback(
     async (feedId: string) => {
       const feed = selectedFeeds[feedId]
-      if (feed && Date.now() - (+feed.updatedAt || 0) > 60 * 60 * 1000) {
+      if ((feed && !feed.data?.length) || (feed && Date.now() - (+feed.updatedAt || 0) > 60 * 60 * 1000)) {
         console.log('Fetching feed data for: ' + feed.title)
         await fetchAndSaveFeedData(feedId)
       }
@@ -133,11 +134,6 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
     e.detail.complete()
   }
 
-  const handleMenuBtn = (path: string) => () => {
-    handleMenuDismiss()
-    history.replace(path)
-  }
-
   const handleShowMenuPopover = (e: React.MouseEvent<HTMLIonButtonElement, MouseEvent>) =>
     setShowPopover({ open: true, event: e.nativeEvent })
 
@@ -158,12 +154,10 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
     setLastScrollTop(scrollTop)
   }
 
-  // const swipeEvents = useSwipeable({ onSwipedLeft: handleNavigation(1), onSwipedRight: handleNavigation(-1) })
-
   useEffect(() => {
     let gesture: Gesture
     if (!feedOrder.length) {
-      return history.replace('/feeds')
+      return history.push('/feeds')
     }
 
     if (!feedOrder.length) {
@@ -171,7 +165,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
       setFeedOrder(defaultFeedOrder)
     }
 
-    if (!currentFeedId) {
+    if ((currentFeedId && !selectedFeeds[currentFeedId]) || !currentFeedId) {
       const firstFeedId = feedOrder[0]
       setCurrentFeedId(firstFeedId)
       hydrateFeedDataIfNeeded(firstFeedId).then(console.log).catch(console.error)
@@ -194,22 +188,38 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
       gesture.enable()
     }
 
+    Plugins.App.addListener('backButton', async () => {
+      if (showAboutModal) {
+        handleHideAboutModal()
+      } else {
+        const { value } = await Plugins.Modals.confirm({
+          title: 'Exit',
+          message: 'Are you sure you want to exit?',
+          cancelButtonTitle: 'No',
+          okButtonTitle: 'Yes',
+        })
+
+        if (value) Plugins.App.exitApp()
+      }
+    })
+
     return () => {
       gesture?.destroy()
+      Plugins.App.removeAllListeners()
     }
-  }, [feedOrder, selectedFeeds, history, currentFeedId, hydrateFeedDataIfNeeded, handleNavigation])
+  }, [feedOrder, selectedFeeds, history, currentFeedId, hydrateFeedDataIfNeeded, handleNavigation, showAboutModal])
 
-  const data = (currentFeedId && selectedFeeds[currentFeedId].data) || []
+  const data = (currentFeedId && selectedFeeds[currentFeedId]?.data) || []
 
   return (
-    <IonApp>
+    <IonPage>
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
             <IonIcon title="Khabar" slot="icon-only" src={logoSvg} />
           </IonButtons>
 
-          <IonTitle>{currentFeedId ? selectedFeeds[currentFeedId].title : 'Khabar'}</IonTitle>
+          <IonTitle>{currentFeedId ? selectedFeeds[currentFeedId]?.title : 'Khabar'}</IonTitle>
           <IonButtons slot="end">
             {isOffline && <IonIcon title="Offline" icon={cloudOffline} />}
             <IonPopover isOpen={showPopover.open} event={showPopover.event} onDidDismiss={handleMenuDismiss}>
@@ -221,11 +231,11 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
                   onIonChange={handleThemeToggle}
                 />
               </IonItem>
-              <IonItem detail={false} button={true} onClick={handleMenuBtn('/feeds')}>
+              <IonItem detail={false} button={true} onClick={handleMenuDismiss} routerLink="/feeds">
                 <IonLabel>Feeds</IonLabel>
                 <IonIcon title="Feed" md={add} ios={addOutline} slot="end" />
               </IonItem>
-              <IonItem detail={false} button={true} onClick={handleMenuBtn('/reorder')}>
+              <IonItem detail={false} button={true} onClick={handleMenuDismiss} routerLink="/reorder">
                 <IonLabel>Reorder</IonLabel>
                 <IonIcon title="Reorder" md={reorderTwoSharp} ios={reorderThreeOutline} slot="end" />
               </IonItem>
@@ -240,13 +250,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent
-        // {...swipeEvents}
-        ref={contentRef}
-        className="article-content"
-        scrollEvents={true}
-        onIonScrollEnd={handleContentScroll}
-      >
+      <IonContent ref={contentRef} className="article-content" scrollEvents={true} onIonScrollEnd={handleContentScroll}>
         <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
           <IonRefresherContent refreshingSpinner="dots" />
         </IonRefresher>
@@ -302,12 +306,11 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
           onIonChange={handleSegmentChange}
         >
           {(feedOrder as string[]).map((id, i) => {
-            const feed = selectedFeeds[id]
-            return (
-              <IonSegmentButton key={'segmentBtn' + id} value={id} data-index={'' + i} title={feed.title}>
-                <img alt={feed.title} src={feed.icon} />
+            return selectedFeeds[id] ? (
+              <IonSegmentButton key={'segmentBtn' + id} value={id} data-index={'' + i} title={selectedFeeds[id].title}>
+                <img alt={selectedFeeds[id].title} src={selectedFeeds[id].icon} />
               </IonSegmentButton>
-            )
+            ) : null
           })}
         </IonSegment>
       </IonFooter>
@@ -328,7 +331,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
         </IonHeader>
         <About />
       </IonModal>
-    </IonApp>
+    </IonPage>
   )
 }
 

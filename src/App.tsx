@@ -1,5 +1,5 @@
 import React from 'react'
-import { IonApp, IonPage, IonRouterOutlet } from '@ionic/react'
+import { IonApp, IonRouterOutlet } from '@ionic/react'
 import { Route, Redirect } from 'react-router-dom'
 import { IonReactRouter } from '@ionic/react-router'
 
@@ -30,15 +30,12 @@ import './styles.css'
 const App: React.FunctionComponent = () => (
   <IonApp>
     <IonReactRouter>
-      <IonPage id="main">
-        <IonRouterOutlet id="main">
-          <Route path="/feeds" component={Feeds} exact />
-          <Route path="/reorder" component={Reorder} exact />
-          <Route path="/" component={Home} exact />
-          <Route component={Home} />
-          <Redirect to="/" />
-        </IonRouterOutlet>
-      </IonPage>
+      <IonRouterOutlet id="main">
+        <Route path="/feeds" component={Feeds} exact />
+        <Route path="/reorder" component={Reorder} exact />
+        <Route path="/home" component={Home} exact />
+        <Redirect to="/home" />
+      </IonRouterOutlet>
     </IonReactRouter>
   </IonApp>
 )

@@ -13,7 +13,7 @@ import {
   IonToolbar,
   IonReorderGroup,
   IonReorder,
-  IonApp,
+  IonPage,
 } from '@ionic/react'
 
 import { ItemReorderEventDetail } from '@ionic/core'
@@ -47,8 +47,6 @@ const Reorder: React.FC<RouteComponentProps> = ({ history }) => {
     e.detail.complete()
   }
 
-  const handleDoneBtn = () => history.replace('/')
-
   useEffect(() => {
     if (!feedOrder.length) {
       const defaultFeedOrder = Object.keys(selectedFeeds)
@@ -57,7 +55,7 @@ const Reorder: React.FC<RouteComponentProps> = ({ history }) => {
   }, [selectedFeeds, feedOrder])
 
   return (
-    <IonApp>
+    <IonPage>
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
@@ -67,7 +65,7 @@ const Reorder: React.FC<RouteComponentProps> = ({ history }) => {
           <IonTitle>Reorder</IonTitle>
 
           <IonButtons slot="end">
-            <IonButton onClick={handleDoneBtn}>Done</IonButton>
+            <IonButton routerLink="/home">Done</IonButton>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
@@ -87,7 +85,7 @@ const Reorder: React.FC<RouteComponentProps> = ({ history }) => {
           ))}
         </IonReorderGroup>
       </IonContent>
-    </IonApp>
+    </IonPage>
   )
 }
 

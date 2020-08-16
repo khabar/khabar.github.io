@@ -1,6 +1,7 @@
 import {
   IonButton,
   IonButtons,
+  IonPage,
   IonContent,
   IonSearchbar,
   IonRefresher,
@@ -24,11 +25,13 @@ import uniqBy from 'lodash/uniqBy'
 import cloneDeep from 'lodash/cloneDeep'
 import { RefresherEventDetail, SearchbarChangeEventDetail } from '@ionic/core'
 import { RouteComponentProps } from 'react-router'
+import { cloudOffline } from 'ionicons/icons'
+import { Plugins } from '@capacitor/core'
 
 import logoSvg from '../icons/logo.svg'
 import { useGlobalState, setGlobalStatePersistent } from '../state'
 import apiRequest from '../utils/apiRequest'
-import { cloudOffline } from 'ionicons/icons'
+import useIsMounted from '../utils/useIsMounted'
 
 const fuseOptions = {
   minMatchCharLength: 2,
@@ -39,7 +42,8 @@ const fuseOptions = {
 const fetchFeedsByTag = async (tagId: string): Promise<IFeed[]> =>
   apiRequest(`/v4/feeds/query?category=${tagId.split('$').pop()}&limit=100&page=1`)
 
-const Feeds: React.FC<RouteComponentProps> = ({ history }) => {
+const Feeds: React.FC<RouteComponentProps> = () => {
+  const mounted = useIsMounted()
   const [feeds] = useGlobalState('feeds')
   const [selectedFeeds] = useGlobalState('selectedFeeds')
   const [feedOrder] = useGlobalState('feedOrder')
@@ -56,6 +60,9 @@ const Feeds: React.FC<RouteComponentProps> = ({ history }) => {
   const contentRef = useRef<HTMLIonContentElement>(null)
   const fuse = new Fuse(feeds, fuseOptions)
 
+  const setSelectedFeeds = (value: { [key: string]: IFeed }) => setGlobalStatePersistent('selectedFeeds', value)
+  const setFeedOrder = (value: string[]) => setGlobalStatePersistent('feedOrder', value)
+
   const handleTagFilter = useCallback(
     (tagId: string, newFeeds?: IFeed[]) => {
       setLoading(true)
@@ -65,30 +72,33 @@ const Feeds: React.FC<RouteComponentProps> = ({ history }) => {
     [feeds],
   )
 
-  const fetchFeeds = async (showLoading = true) => {
-    setLoading(showLoading)
-    try {
-      const tagsData = await apiRequest('/v1/tags')
+  const fetchFeeds = useCallback(
+    async (showLoading = true) => {
+      setLoading(showLoading)
+      try {
+        const tagsData = await apiRequest('/v1/tags')
 
-      const feedsDataArray = await Promise.all(
-        (tagsData as ITag[]).reduce((acc: Promise<IFeed[]>[], { _id, children }) => {
-          if (children.length) {
-            acc = acc.concat(children.map((x) => fetchFeedsByTag(x._id)))
-          } else {
-            acc.push(fetchFeedsByTag(_id))
-          }
-          return acc
-        }, []),
-      )
+        const feedsDataArray = await Promise.all(
+          (tagsData as ITag[]).reduce((acc: Promise<IFeed[]>[], { _id, children }) => {
+            if (children.length) {
+              acc = acc.concat(children.map((x) => fetchFeedsByTag(x._id)))
+            } else {
+              acc.push(fetchFeedsByTag(_id))
+            }
+            return acc
+          }, []),
+        )
 
-      setGlobalStatePersistent('feeds', uniqBy(([] as IFeed[]).concat(...feedsDataArray), 'id'))
-      setGlobalStatePersistent('tags', tagsData)
-    } catch (e) {
-      setError(e.message)
-    } finally {
-      setLoading(false)
-    }
-  }
+        setGlobalStatePersistent('feeds', uniqBy(([] as IFeed[]).concat(...feedsDataArray), 'id'))
+        setGlobalStatePersistent('tags', tagsData)
+      } catch (e) {
+        setError(e.message)
+      } finally {
+        if (mounted.current) setLoading(false)
+      }
+    },
+    [mounted],
+  )
 
   const handleTagSelect = (_id: string, children: ITag[]) => () => {
     setSelectedTag(_id)
@@ -110,26 +120,17 @@ const Feeds: React.FC<RouteComponentProps> = ({ history }) => {
 
       const newFeedOrder = [...feedOrder]
       const index = newFeedOrder.indexOf(id)
+
+      setSelectedFeeds(selectedFeedsClone)
+
       if (index > -1) {
         newFeedOrder.splice(index, 1)
-
-        setGlobalStatePersistent('feedOrder', newFeedOrder)
+        setFeedOrder(newFeedOrder)
       }
     } else {
       selectedFeedsClone[id] = feed
-      setGlobalStatePersistent('feedOrder', [...new Set([...feedOrder, id])])
-    }
-
-    setGlobalStatePersistent('selectedFeeds', selectedFeedsClone)
-    if (selectedFeedsClone[id]) {
-      apiRequest(`/v4/articles?feeds=${id}&limit=30&page=1&sort=latest`)
-        .then((data) => {
-          const selectedFeedsCloneData = cloneDeep(selectedFeedsClone)
-          selectedFeedsCloneData[id].data = data
-          selectedFeedsCloneData[id].updatedAt = Date.now()
-          setGlobalStatePersistent('selectedFeeds', selectedFeedsCloneData)
-        })
-        .catch(console.error)
+      setSelectedFeeds(selectedFeedsClone)
+      setFeedOrder([...new Set([...feedOrder, id])])
     }
   }
 
@@ -157,12 +158,29 @@ const Feeds: React.FC<RouteComponentProps> = ({ history }) => {
         .then(() => console.log('Feeds fetched'))
         .catch(console.error)
     }
-  }, [feeds, tags, selectedTag, handleTagFilter, filteredFeeds])
+
+    Plugins.App.addListener('backButton', async () => {
+      if (!Object.keys(selectedFeeds).length) {
+        const { value } = await Plugins.Modals.confirm({
+          title: 'Exit',
+          message: 'Are you sure you want to exit?',
+          cancelButtonTitle: 'No',
+          okButtonTitle: 'Yes',
+        })
+
+        if (value) Plugins.App.exitApp()
+      }
+    })
+
+    return () => {
+      Plugins.App.removeAllListeners()
+    }
+  }, [feeds, tags, selectedTag, handleTagFilter, filteredFeeds, selectedFeeds, fetchFeeds])
 
   const selectedFeedIds = Object.keys(selectedFeeds)
 
   return (
-    <>
+    <IonPage>
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
@@ -171,7 +189,7 @@ const Feeds: React.FC<RouteComponentProps> = ({ history }) => {
           <IonTitle>Feeds</IonTitle>
           <IonButtons slot="end">
             {isOffline && <IonIcon title="Offline" icon={cloudOffline} />}
-            <IonButton disabled={Object.keys(selectedFeeds).length === 0} onClick={() => history.replace('/')}>
+            <IonButton disabled={Object.keys(selectedFeeds).length === 0} routerLink="/home">
               Done
             </IonButton>
           </IonButtons>
@@ -278,7 +296,7 @@ const Feeds: React.FC<RouteComponentProps> = ({ history }) => {
           ]}
         />
       </IonContent>
-    </>
+    </IonPage>
   )
 }
 
