@@ -42,8 +42,9 @@ import {
   time,
   timeOutline,
 } from 'ionicons/icons'
-import { isPlatform, RefresherEventDetail } from '@ionic/core'
+import { isPlatform, RefresherEventDetail, ScrollDetail } from '@ionic/core'
 import cloneDeep from 'lodash/cloneDeep'
+import throttle from 'lodash/throttle'
 import { Plugins } from '@capacitor/core'
 
 import { useGlobalState, toggleTheme, setGlobalStatePersistent, toggleSort } from '../state'
@@ -147,11 +148,10 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
   const handleShowMenuPopover = (e: React.MouseEvent<HTMLIonButtonElement, MouseEvent>) =>
     setShowPopover({ open: true, event: e.nativeEvent })
 
-  const handleContentScroll = async () => {
-    const scrollTop = (await contentRef.current?.getScrollElement())?.scrollTop || 0
-    const scrollDiff = lastScrollTop - scrollTop
+  const handleContentScroll = async (e: CustomEvent<ScrollDetail>) => {
+    const {scrollTop} = e.detail || 0
 
-    if (scrollDiff < 50) {
+    if (lastScrollTop < scrollTop) {
       if (!isFooterHidden) {
         segmentRef.current?.classList.add(HIDE_FOOTER)
         setIsFooterHidden(true)
@@ -263,7 +263,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent ref={contentRef} className="article-content" scrollEvents={true} onIonScrollEnd={handleContentScroll}>
+      <IonContent ref={contentRef} className="article-content" scrollEvents={true} onIonScroll={throttle(handleContentScroll, 200)}>
         <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
           <IonRefresherContent refreshingSpinner="dots" />
         </IonRefresher>
