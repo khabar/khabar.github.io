@@ -2,6 +2,7 @@ import { createGlobalState } from 'react-hooks-global-state'
 
 const initialState = {
   isOffline: false,
+  sort: 'popular',
   theme: 'dark',
   feeds: [],
   tags: [],
@@ -27,6 +28,16 @@ export const toggleTheme = () => {
   document.body.classList.add(theme)
   setGlobalState('theme', theme)
   window.localStorage['theme'] = theme
+}
+
+export const toggleSort = (cb: (s: string) => void) => {
+  let sort = window.localStorage['sort'] || 'popular'
+  document.body.classList.remove(sort)
+  sort = sort === 'popular' ? 'latest' : 'popular'
+  document.body.classList.add(sort)
+  setGlobalState('sort', sort)
+  window.localStorage['sort'] = sort
+  cb(sort)
 }
 
 export const setGlobalStatePersistent = (key: string, value: any) => {

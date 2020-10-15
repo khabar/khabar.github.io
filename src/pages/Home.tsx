@@ -37,19 +37,23 @@ import {
   reorderThreeOutline,
   reorderTwoSharp,
   cloudOffline,
+  flame,
+  flameOutline,
+  time,
+  timeOutline,
 } from 'ionicons/icons'
 import { isPlatform, RefresherEventDetail } from '@ionic/core'
 import cloneDeep from 'lodash/cloneDeep'
 import { Plugins } from '@capacitor/core'
 
-import { useGlobalState, toggleTheme, setGlobalStatePersistent } from '../state'
+import { useGlobalState, toggleTheme, setGlobalStatePersistent, toggleSort } from '../state'
 import logoSvg from '../icons/logo.svg'
 import About from '../components/About'
 import Card from '../components/Card'
 import useIsMounted from '../utils/useIsMounted'
 import apiRequest from '../utils/apiRequest'
 
-const fetchArticles = async (feedId: string) => apiRequest(`/v4/articles?feeds=${feedId}&limit=30&page=1&sort=latest`)
+const fetchArticles = async (feedId: string, sort:string) => apiRequest(`/v4/articles?feeds=${feedId}&limit=30&page=1&sort=${sort}`)
 
 const HIDE_FOOTER = 'hide-footer'
 const windowWidth = window.innerWidth
@@ -57,6 +61,7 @@ const windowWidth = window.innerWidth
 const Home: React.FC<RouteComponentProps> = ({ history }) => {
   const isMounted = useIsMounted()
   const [theme] = useGlobalState('theme')
+  const [sort] = useGlobalState('sort')
   const [selectedFeeds] = useGlobalState('selectedFeeds')
   const [feedOrder] = useGlobalState('feedOrder')
   const [isOffline] = useGlobalState('isOffline')
@@ -76,11 +81,11 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
   const setSelectedFeeds = (values: { [key: string]: IFeed }) => setGlobalStatePersistent('selectedFeeds', values)
 
   const fetchAndSaveFeedData = useCallback(
-    async (feedId: string, showLoading = true) => {
+    async (feedId: string, showLoading = true, sortOverride?:string) => {
       setLoading(showLoading)
       try {
         const selectedFeedsClone = cloneDeep(selectedFeeds)
-        const data = await fetchArticles(feedId)
+        const data = await fetchArticles(feedId, sortOverride || sort)
         selectedFeedsClone[feedId].data = data
         selectedFeedsClone[feedId].updatedAt = Date.now()
         setSelectedFeeds(selectedFeedsClone)
@@ -90,7 +95,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
         setLoading(false)
       }
     },
-    [selectedFeeds],
+    [selectedFeeds, sort],
   )
 
   const hydrateFeedDataIfNeeded = useCallback(
@@ -118,6 +123,11 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
   const handleThemeToggle = () => {
     handleMenuDismiss()
     toggleTheme()
+  }
+
+  const handleSortToggle = () => {
+    handleMenuDismiss()
+    toggleSort(async (sortBy:string) => await fetchAndSaveFeedData(currentFeedId, true, sortBy))
   }
 
   const handleOpenAboutModal = () => {
@@ -222,6 +232,9 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
           <IonTitle>{currentFeedId ? selectedFeeds[currentFeedId]?.title : 'Khabar'}</IonTitle>
           <IonButtons slot="end">
             {isOffline && <IonIcon title="Offline" icon={cloudOffline} />}
+            <IonButton onClick={handleSortToggle} slot="end" title={sort[0].toUpperCase() + sort.slice(1)} >
+              <IonIcon slot="icon-only" ios={sort === 'popular' ? flameOutline : timeOutline} md={sort === 'popular' ? flame : time} />
+            </IonButton>
             <IonPopover isOpen={showPopover.open} event={showPopover.event} onDidDismiss={handleMenuDismiss}>
               <IonItem detail={false}>
                 <IonLabel>Theme</IonLabel>
@@ -244,7 +257,7 @@ const Home: React.FC<RouteComponentProps> = ({ history }) => {
                 <IonIcon title="Reorder" icon={information} slot="end" />
               </IonItem>
             </IonPopover>
-            <IonButton onClick={handleShowMenuPopover} slot="end">
+            <IonButton onClick={handleShowMenuPopover} slot="end" title="Menu">
               <IonIcon slot="icon-only" ios={ellipsisHorizontal} md={ellipsisVertical} />
             </IonButton>
           </IonButtons>
