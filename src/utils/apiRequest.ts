@@ -1,6 +1,6 @@
 import { setGlobalStatePersistent } from '../state'
 
-const API_BASEURL = 'https://cors-anywhere.herokuapp.com/https://api.usepanda.com'
+const API_BASEURL = 'https://cors-anywhere.himalay.workers.dev/?https://api.usepanda.com'
 const requiredOptions = { headers: { Origin: 'https://khabar.github.io/' } }
 
 const apiRequest = async (path: string, options?: RequestInit) => {
